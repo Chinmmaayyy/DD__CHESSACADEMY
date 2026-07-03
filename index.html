@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta -->
+    <title>DD Chess Academy | Professional Chess Classes in Dombivli</title>
+    <meta
+      name="description"
+      content="Join DD Chess Academy for beginner to advanced chess coaching under National Arbiter and FIDE Trainer Dipak Dhuri. Classes for ages 5+. Book a free demo today."
+    />
+    <meta name="theme-color" content="#0b1220" />
+    <meta
+      name="keywords"
+      content="Chess Classes Dombivli, Chess Academy Dombivli, Kids Chess Coaching, Beginner Chess Classes, FIDE Trainer Dombivli"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DD Chess Academy | Professional Chess Coaching" />
+    <meta
+      property="og:description"
+      content="Premium chess coaching for children and adults under National Arbiter & FIDE Trainer Dipak Dhuri."
+    />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Local Business structured data (SEO — Master Spec v14) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SportsActivityLocation",
+        "name": "DD Chess Academy",
+        "description": "Professional chess coaching for children and adults under National Arbiter and FIDE Trainer Dipak Dhuri. Beginner to advanced, ages 5+.",
+        "url": "https://www.ddchessacademy.com",
+        "areaServed": "Dombivli",
+        "founder": {
+          "@type": "Person",
+          "name": "Dipak Dhuri",
+          "jobTitle": "National Arbiter, FIDE Trainer",
+          "identifier": "FIDE ID 25061305"
+        },
+        "sport": "Chess",
+        "audience": { "@type": "Audience", "suggestedMinAge": 5 }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Set theme before first paint to avoid a flash of the wrong palette -->
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('dd-theme')
+          var t =
+            s === 'light' || s === 'dark'
+              ? s
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.setAttribute('data-theme', t)
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      })()
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

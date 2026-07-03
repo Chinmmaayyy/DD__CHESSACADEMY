@@ -1,0 +1,233 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   DD CHESS ACADEMY — DESIGN TOKENS
+   Source of truth: Master Specification v2 / v9 + Design System
+   ============================================================ */
+@theme {
+  /* ---- Brand colors ---- */
+  --color-navy-900: #0b1220; /* main dark background */
+  --color-navy-800: #111827; /* dark surface / cards */
+  --color-navy-700: #1b2436; /* elevated dark surface */
+  --color-navy-600: #2a3550;
+
+  --color-gold-300: #e7d8a6; /* soft gold / borders */
+  --color-gold-400: #dcc059;
+  --color-gold-500: #d4af37; /* primary accent */
+  --color-gold-600: #b8952b;
+
+  --color-royal-500: #2563eb; /* interactive blue */
+  --color-royal-600: #1d4ed8;
+
+  --color-ivory: #f8fafc; /* light background */
+  --color-paper: #ffffff; /* light surface */
+  --color-line: #e6e9ef; /* hairline on light */
+  --color-ink: #111827; /* primary text on light */
+  --color-slate-soft: #5b6472; /* secondary text */
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-whatsapp: #25d366;
+
+  /* ---- Semantic tokens (theme-aware) ----
+     These map Tailwind utilities (bg-canvas, text-content, …) to runtime CSS
+     variables defined per-theme below. Switching [data-theme] re-points them. */
+  --color-canvas: var(--canvas);
+  --color-canvas-alt: var(--canvas-alt);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-hairline: var(--hairline);
+  --color-content: var(--content);
+  --color-heading: var(--heading);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-inverse: var(--inverse);
+  --color-inverse-content: var(--inverse-content);
+  --color-solid: var(--solid);
+  --color-solid-content: var(--solid-content);
+  --color-accent: var(--accent);
+
+  /* ---- Typography ---- */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ---- Radii ---- */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  /* ---- Shadows ---- */
+  --shadow-soft: 0 4px 12px rgba(11, 18, 32, 0.08);
+  --shadow-medium: 0 10px 30px rgba(11, 18, 32, 0.12);
+  --shadow-large: 0 20px 50px rgba(11, 18, 32, 0.18);
+  --shadow-gold: 0 12px 34px rgba(212, 175, 55, 0.28);
+
+  /* ---- Motion ---- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---- Container ---- */
+  --breakpoint-3xl: 1440px;
+}
+
+/* ============================================================
+   THEME PALETTES — light (default) & dark
+   ============================================================ */
+:root,
+:root[data-theme='light'] {
+  --canvas: #f8fafc; /* page base */
+  --canvas-alt: #eef2f8; /* alternate band */
+  --surface: #ffffff; /* cards / popovers */
+  --surface-2: #edf0f3; /* nested / muted fill */
+  --hairline: #e0e6f0; /* borders */
+  --content: #20293c; /* body text */
+  --heading: #16203a; /* headings */
+  --muted: #626d84; /* secondary text */
+  --primary: #2662d9; /* interactive blue */
+  --on-primary: #ffffff;
+  --inverse: #0b1220; /* intentional dark panels (footer/CTA) */
+  --inverse-content: #e6eaf2;
+  --solid: #16203a; /* neutral solid button */
+  --solid-content: #ffffff;
+  --accent: #b8952b; /* gold accent for small text/eyebrows */
+
+  --shadow-soft: 0 4px 12px rgba(11, 18, 32, 0.08);
+  --shadow-medium: 0 10px 30px rgba(11, 18, 32, 0.1);
+  --shadow-large: 0 20px 50px rgba(11, 18, 32, 0.16);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --canvas: #0b1220; /* page base */
+  --canvas-alt: #0e1729; /* alternate band */
+  --surface: #111a2e; /* cards / popovers */
+  --surface-2: #1b2436; /* nested / muted fill */
+  --hairline: rgba(233, 238, 250, 0.1); /* borders */
+  --content: #c6d0e0; /* body text */
+  --heading: #f4f7fc; /* headings */
+  --muted: #8b97ac; /* secondary text */
+  --primary: #4f8bf5; /* interactive blue (brighter on dark) */
+  --on-primary: #ffffff;
+  --inverse: #060a13; /* even deeper panels */
+  --inverse-content: #e6eaf2;
+  --solid: #e9eefb; /* neutral solid button (light on dark) */
+  --solid-content: #0b1220;
+  --accent: #e2c86a; /* brighter gold accent on dark */
+
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-large: 0 20px 50px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-content);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    transition:
+      background-color 0.3s var(--ease-out-soft),
+      color 0.3s var(--ease-out-soft);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--color-heading);
+  }
+
+  ::selection {
+    background: var(--color-gold-500);
+    color: var(--color-navy-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ============================================================
+   UTILITIES / HELPERS
+   ============================================================ */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Tabular numerals for ratings / stats */
+  .tnum {
+    font-feature-settings: 'tnum' 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Eyebrow / overline label */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* Gold gradient text for premium accents */
+  .text-gold-gradient {
+    background: linear-gradient(120deg, #f0dd9a 0%, #d4af37 45%, #b8952b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Subtle chessboard texture overlay */
+  .chess-grid {
+    background-image:
+      linear-gradient(rgba(212, 175, 55, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212, 175, 55, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Radial glow used behind hero visuals */
+  .glow-gold {
+    background: radial-gradient(
+      circle at center,
+      rgba(212, 175, 55, 0.22) 0%,
+      rgba(212, 175, 55, 0) 70%
+    );
+  }
+
+  .container-x {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 5rem);
+  }
+}
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
