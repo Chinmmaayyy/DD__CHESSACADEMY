@@ -1,6 +1,9 @@
-import cover1 from '@/assets/gallery_3.jpeg'
-import cover2 from '@/assets/gallery_8.jpeg'
-import cover3 from '@/assets/gallery_12.jpeg'
+import cover1 from '@/assets/blog1.png'
+import cover2 from '@/assets/blog2.png'
+import cover3 from '@/assets/blog3.png'
+import cover4 from '@/assets/gallery_4.jpeg'
+import cover5 from '@/assets/gallery_9.jpeg'
+import cover6 from '@/assets/gallery_16.jpeg'
 
 export interface BlogPost {
   slug: string
@@ -18,6 +21,98 @@ export interface BlogPost {
 }
 
 export const posts: BlogPost[] = [
+  {
+    slug: 'chess-classes-kalyan-dombivli-region',
+    title: 'Where to Learn Chess in the Kalyan–Dombivli Region',
+    description:
+      'A local guide to finding quality chess coaching across Kalyan, Dombivli, Thakurli, Nandivali and nearby areas — and what separates a good academy from the rest.',
+    date: '2026-06-28',
+    displayDate: '28 June 2026',
+    author: 'DD Chess Academy',
+    tags: ['Kalyan', 'Dombivli', 'Guide'],
+    cover: cover4,
+    readMinutes: 6,
+    body: `The **Kalyan–Dombivli region** is buzzing with young talent, and more families than ever are looking for **chess classes near them**. Whether you are in Dombivli, Kalyan, Thakurli, Nandivali, Titwala or Ambernath, here is how to find coaching that actually helps your child improve.
+
+## Look for a qualified, certified coach
+Anyone can teach the rules — but real progress needs a trained coach. Look for recognised credentials like a **FIDE Trainer** or **National Arbiter**. At DD Chess Academy, students learn directly under a National Arbiter & FIDE Trainer with decades of experience.
+
+## Find a centre close to home
+Consistency matters more than anything in chess. A centre nearby means your child attends regularly without long travel. DD Chess Academy runs centres across **Dombivli, Nandivali and Thakurli**, serving families from Kalyan, Ulhasnagar, Ambernath and the wider region.
+
+## Ask about the curriculum and batches
+- Is there a **structured level system** (beginner → advanced)?
+- Are **batch sizes small** enough for personal attention?
+- Do students get **tournament exposure**?
+
+## Coaching in your language
+Many families in the Kalyan–Dombivli belt are most comfortable in Marathi or Hindi. Good coaching meets students where they are — our classes are conducted in **Hindi, Marathi and English**.
+
+> DD Chess Academy was built to make professional chess coaching accessible across the Kalyan–Dombivli region, without compromising on quality.
+
+Want to see if it's the right fit? [Book a free demo class](/#contact) at your nearest centre.`,
+  },
+  {
+    slug: 'chess-best-after-school-activity-kalyan',
+    title: 'Why Chess Is the Best After-School Activity for Kids in Kalyan & Dombivli',
+    description:
+      'Parents across the Kalyan–Dombivli region are choosing chess over screen time. Here is why it builds focus, patience and confidence like nothing else.',
+    date: '2026-06-24',
+    displayDate: '24 June 2026',
+    author: 'DD Chess Academy',
+    tags: ['Parents', 'Kalyan', 'Kids'],
+    cover: cover5,
+    readMinutes: 5,
+    body: `Between school, tuition and screens, parents in **Kalyan and Dombivli** are looking for an activity that is fun *and* genuinely good for their child's development. Chess ticks every box.
+
+## It builds real focus
+In a world of constant distraction, chess trains children to sit, think and concentrate — a skill that shows up directly in their schoolwork.
+
+## It teaches patience and calm
+Every move has consequences. Children learn to slow down, consider their options and stay calm under pressure.
+
+## It's screen-free (or screen-smart)
+Chess gives kids a challenging, rewarding hobby away from mindless scrolling — and when they do use a screen, our [Play & Learn platform](/learn) turns it into productive practice.
+
+## It grows with your child
+Unlike many activities, chess never gets "finished". A five-year-old and a college student can both keep improving for years.
+
+## It's affordable and local
+You don't need expensive equipment or long travel. With DD Chess Academy centres across **Dombivli, Nandivali and Thakurli**, quality coaching is right around the corner for Kalyan–Dombivli families.
+
+> Chess is one of the few activities that is genuinely fun for kids while quietly building the habits that help them succeed everywhere else.
+
+Curious? [Book a free demo class](/#contact) and let your child try it.`,
+  },
+  {
+    slug: 'building-local-chess-champions-dombivli',
+    title: 'From Dombivli to the Board: Building Local Chess Champions',
+    description:
+      'How structured coaching and regular tournaments in the Kalyan–Dombivli region turn complete beginners into confident, competitive players.',
+    date: '2026-06-16',
+    displayDate: '16 June 2026',
+    author: 'DD Chess Academy',
+    tags: ['Tournaments', 'Community', 'Dombivli'],
+    cover: cover6,
+    readMinutes: 5,
+    body: `Every champion starts as a beginner. What turns a curious child in **Dombivli** into a confident tournament player is not talent alone — it's a clear path and real competitive experience.
+
+## A structured path, not random lessons
+Improvement comes from building block by block: the rules, basic tactics, opening principles, endgames and then full games. Our level system makes each student's progress visible.
+
+## Tournaments build real players
+You only truly learn chess by competing. DD Chess Academy runs regular **in-house and rated tournaments** so students across the Kalyan–Dombivli region get genuine match experience in a supportive setting.
+
+## Learning from every game
+Win or lose, every game is a lesson. Reviewing games — spotting the winning idea or the mistake — is where the biggest jumps in strength happen.
+
+## A community that lifts everyone
+When students train and compete together, they push each other. That sense of a local chess community is what keeps children motivated year after year.
+
+> From their first move to their first trophy, our students grow with structured coaching, regular competition and a community that believes in them.
+
+Ready to start the journey? [Book a free demo class](/#contact) today.`,
+  },
   {
     slug: 'benefits-of-chess-for-children',
     title: '7 Proven Benefits of Chess for Children',
