@@ -38,9 +38,12 @@ export function Navbar() {
     <header
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        // Mobile: always a solid, clearly-visible bar.
+        'border-b border-hairline/80 bg-canvas/90 backdrop-blur-md',
+        // Desktop: transparent over the hero until scrolled.
         scrolled
-          ? 'border-b border-hairline/80 bg-canvas/85 backdrop-blur-md'
-          : 'border-b border-transparent bg-transparent',
+          ? 'lg:border-hairline/80 lg:bg-canvas/85'
+          : 'lg:border-transparent lg:bg-transparent lg:backdrop-blur-none',
       )}
     >
       <nav className="container-x flex h-16 items-center justify-between gap-4 lg:h-20 lg:gap-8">
