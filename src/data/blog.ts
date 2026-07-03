@@ -1,9 +1,9 @@
 import cover1 from '@/assets/blog1.png'
 import cover2 from '@/assets/blog2.png'
 import cover3 from '@/assets/blog3.png'
-import cover4 from '@/assets/gallery_4.jpeg'
-import cover5 from '@/assets/gallery_9.jpeg'
-import cover6 from '@/assets/gallery_16.jpeg'
+import cover4 from '@/assets/whereclasskalayndom.png'
+import cover5 from '@/assets/afterschool.png'
+import cover6 from '@/assets/champions.png'
 
 export interface BlogPost {
   slug: string
