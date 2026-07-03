@@ -89,46 +89,8 @@ export function BlogPostPage() {
   const others = posts.filter((p) => p.slug !== post.slug).slice(0, 2)
 
   return (
-    <article className="bg-canvas pb-20 lg:pb-28">
-      {/* Cover */}
-      <div className="relative h-[42vh] min-h-[280px] w-full overflow-hidden">
-        <img
-          src={post.cover}
-          alt={post.title}
-          className="h-full w-full object-cover object-[50%_25%]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/40 to-navy-900/30" />
-        <Container className="absolute inset-x-0 bottom-0 pb-8">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap gap-1.5">
-              {post.tags.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full bg-gold-500/90 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wide text-navy-900"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            <h1 className="mt-3 font-display text-[clamp(1.8rem,4vw,2.75rem)] font-semibold leading-tight text-white">
-              {post.title}
-            </h1>
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-white/80">
-              <span className="flex items-center gap-1.5">
-                <CalendarDays className="size-4" />
-                {post.displayDate}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Clock className="size-4" />
-                {post.readMinutes} min read
-              </span>
-              <span>By {post.author}</span>
-            </div>
-          </div>
-        </Container>
-      </div>
-
-      <Container className="pt-10">
+    <article className="bg-canvas pb-20 pt-24 lg:pb-28 lg:pt-28">
+      <Container>
         <Link
           to="/blog"
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted transition-colors hover:text-accent"
@@ -137,7 +99,45 @@ export function BlogPostPage() {
           All articles
         </Link>
 
+        {/* Header */}
         <div className="mt-6 max-w-3xl">
+          <div className="flex flex-wrap gap-1.5">
+            {post.tags.map((t) => (
+              <span
+                key={t}
+                className="rounded-full border border-gold-500/30 bg-gold-500/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wide text-accent"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+          <h1 className="mt-3 font-display text-[clamp(1.9rem,4vw,2.9rem)] font-semibold leading-tight text-heading">
+            {post.title}
+          </h1>
+          <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted">
+            <span className="flex items-center gap-1.5">
+              <CalendarDays className="size-4" />
+              {post.displayDate}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Clock className="size-4" />
+              {post.readMinutes} min read
+            </span>
+            <span>By {post.author}</span>
+          </div>
+        </div>
+
+        {/* Cover — shown in full, never cropped */}
+        <div className="mt-8">
+          <img
+            src={post.cover}
+            alt={post.title}
+            className="mx-auto w-full max-w-4xl rounded-[20px] border border-hairline shadow-[var(--shadow-soft)]"
+          />
+        </div>
+
+        {/* Body */}
+        <div className="mt-10 max-w-3xl">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={md}>
             {post.body}
           </ReactMarkdown>
