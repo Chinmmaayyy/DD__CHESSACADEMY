@@ -7,7 +7,9 @@ import { useInView } from 'framer-motion'
  */
 export function useCountUp(target: number, durationMs = 1500) {
   const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  // `amount` (fraction visible) is far more reliable on short mobile screens
+  // than a negative root margin, which could exclude small numbers entirely.
+  const inView = useInView(ref, { once: true, amount: 0.4 })
   const [value, setValue] = useState(0)
 
   useEffect(() => {
