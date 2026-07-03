@@ -10,41 +10,46 @@ Make a new Google Sheet. Note its tab name (default `Sheet1`).
 In the Sheet: **Extensions → Apps Script**, delete anything there, paste:
 
 ```javascript
-// ⚙️ Address that should receive an email for every enquiry:
+// ⚙️ CONFIG — Sheet ID (the long code in your Sheet's URL) + notify email:
+var SHEET_ID = '1iA0BIkEnOf9uU5DyoiqPb3r2lzgrDREPBaBhik0XWEM';
+var SHEET_TAB = 'Sheet1';
 var NOTIFY_EMAIL = 'dhuridipak2@gmail.com';
 
+// Opening the /exec URL in a browser shows this — confirms the app is live.
+function doGet() {
+  return ContentService
+    .createTextOutput('👍 DD Chess Academy Logging Web App is running successfully!')
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
-  var data = {};
-  try { data = JSON.parse(e.postData.contents); } catch (err) {}
+  try {
+    // openById works whether the script is bound to the Sheet or standalone.
+    var ss = SpreadsheetApp.openById(SHEET_ID);
+    var sheet = ss.getSheetByName(SHEET_TAB) || ss.getSheets()[0];
 
-  // Create header row once
-  if (sheet.getLastRow() === 0) {
+    var data = {};
+    try { data = JSON.parse(e.postData.contents); } catch (err) {}
+
+    // Create header row once
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        'Timestamp', 'Type', 'Student', 'Age', 'Parent',
+        'Phone', 'Email', 'Level', 'Branch', 'Message', 'Source', 'Page'
+      ]);
+    }
+
     sheet.appendRow([
-      'Timestamp', 'Type', 'Student', 'Age', 'Parent',
-      'Phone', 'Email', 'Level', 'Branch', 'Message', 'Source', 'Page'
+      data.timestamp || new Date().toISOString(),
+      data.type || '', data.studentName || '', data.age || '',
+      data.parentName || '', data.phone || '', data.email || '',
+      data.level || '', data.branch || '', data.message || '',
+      data.source || '', data.page || ''
     ]);
-  }
 
-  sheet.appendRow([
-    data.timestamp || new Date().toISOString(),
-    data.type || '',
-    data.studentName || '',
-    data.age || '',
-    data.parentName || '',
-    data.phone || '',
-    data.email || '',
-    data.level || '',
-    data.branch || '',
-    data.message || '',
-    data.source || '',
-    data.page || ''
-  ]);
-
-  // Also email real enquiry submissions (skip WhatsApp / click logs).
-  var isEnquiry = (data.type || '').toLowerCase().indexOf('enquiry') !== -1 || !!data.phone;
-  if (isEnquiry) {
-    try {
+    // Also email real enquiry submissions (skip WhatsApp / click logs).
+    var isEnquiry = String(data.type || '').toLowerCase().indexOf('enquiry') !== -1 || !!data.phone;
+    if (isEnquiry) {
       var body =
         'New enquiry from the DD Chess Academy website:\n\n' +
         'Student:          ' + (data.studentName || '-') + '\n' +
@@ -62,18 +67,25 @@ function doPost(e) {
         replyTo: data.email || NOTIFY_EMAIL,
         body: body
       });
-    } catch (mailErr) {}
-  }
+    }
 
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 ```
 
-> When you deploy/authorise the script it will now also ask for permission to
-> **send email as you** (Gmail) — approve it. Every enquiry then lands in both
-> the Sheet **and** your inbox. WhatsApp/click logs are not emailed.
+> **Important — after pasting, you must RE-DEPLOY the new version:**
+> **Deploy → Manage deployments → ✏️ (edit) → Version: _New version_ → Deploy.**
+> Editing the code alone does **not** update the live `/exec` URL.
+> It will also ask permission to **send email as you** (Gmail) — approve it.
+> Every enquiry then lands in both the Sheet **and** your inbox; WhatsApp/click
+> logs are not emailed.
 
 ## 3. Deploy
 **Deploy → New deployment → ⚙️ → Web app**

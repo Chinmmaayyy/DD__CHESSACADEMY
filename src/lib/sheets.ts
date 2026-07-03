@@ -12,7 +12,8 @@
  * Requests are sent with `mode: 'no-cors'` (fire-and-forget) so they never
  * block the user or throw on CORS. If the endpoint is empty, this no-ops.
  */
-export const SHEETS_ENDPOINT = '' // ← paste your Apps Script /exec URL here
+export const SHEETS_ENDPOINT =
+  'https://script.google.com/macros/s/AKfycbx6hfRqxfq_kXC29RA0VBMRlyHnBk5E_vf7_wwrx_dtbyX6spsFWRM9OB2iktnQl2Lg/exec'
 
 export type LeadEvent =
   | { type: 'enquiry'; [k: string]: unknown }
