@@ -20,4 +20,5 @@ export const coach: Coach = {
   licenseType: 'National Arbiter',
   licenseActive: true,
   licensedSince: '2018-03-13',
+  languages: ['Hindi', 'Marathi', 'English'],
 }

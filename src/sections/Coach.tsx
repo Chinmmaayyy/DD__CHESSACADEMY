@@ -115,6 +115,19 @@ export function Coach() {
                   accessible while maintaining the highest standards of the{' '}
                   <strong className="text-heading">FIDE (World Chess Federation)</strong>.
                 </p>
+
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-heading">🗣️ Coaching in:</span>
+                  {coach.languages.map((lang) => (
+                    <span
+                      key={lang}
+                      className="rounded-full border border-hairline bg-surface-2 px-3 py-1 text-xs font-medium text-content"
+                    >
+                      {lang}
+                    </span>
+                  ))}
+                  <span className="text-xs text-muted">+ several other Indian languages</span>
+                </div>
               </div>
             </Reveal>
 

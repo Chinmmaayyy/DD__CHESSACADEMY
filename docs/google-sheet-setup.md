@@ -10,6 +10,9 @@ Make a new Google Sheet. Note its tab name (default `Sheet1`).
 In the Sheet: **Extensions → Apps Script**, delete anything there, paste:
 
 ```javascript
+// ⚙️ Address that should receive an email for every enquiry:
+var NOTIFY_EMAIL = 'dhuridipak2@gmail.com';
+
 function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
   var data = {};
@@ -38,11 +41,39 @@ function doPost(e) {
     data.page || ''
   ]);
 
+  // Also email real enquiry submissions (skip WhatsApp / click logs).
+  var isEnquiry = (data.type || '').toLowerCase().indexOf('enquiry') !== -1 || !!data.phone;
+  if (isEnquiry) {
+    try {
+      var body =
+        'New enquiry from the DD Chess Academy website:\n\n' +
+        'Student:          ' + (data.studentName || '-') + '\n' +
+        'Age:              ' + (data.age || '-') + '\n' +
+        'Parent/Guardian:  ' + (data.parentName || '-') + '\n' +
+        'Phone:            ' + (data.phone || '-') + '\n' +
+        'Email:            ' + (data.email || '-') + '\n' +
+        'Level:            ' + (data.level || '-') + '\n' +
+        'Preferred centre: ' + (data.branch || '-') + '\n' +
+        'Message:          ' + (data.message || '-') + '\n\n' +
+        'Received: ' + (data.timestamp || new Date().toISOString());
+      MailApp.sendEmail({
+        to: NOTIFY_EMAIL,
+        subject: 'New enquiry — DD Chess Academy',
+        replyTo: data.email || NOTIFY_EMAIL,
+        body: body
+      });
+    } catch (mailErr) {}
+  }
+
   return ContentService
     .createTextOutput(JSON.stringify({ ok: true }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 ```
+
+> When you deploy/authorise the script it will now also ask for permission to
+> **send email as you** (Gmail) — approve it. Every enquiry then lands in both
+> the Sheet **and** your inbox. WhatsApp/click logs are not emailed.
 
 ## 3. Deploy
 **Deploy → New deployment → ⚙️ → Web app**

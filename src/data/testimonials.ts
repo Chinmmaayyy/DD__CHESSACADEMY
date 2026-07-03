@@ -11,7 +11,7 @@ export const testimonials: Testimonial[] = [
     student: 'Age 21',
     rating: 5,
     review:
-      'I joined as a complete beginner in my first year of college. The structured coaching took me from barely knowing the rules to playing rated tournaments with real confidence.',
+      'I joined as a complete beginner in my 8th grade . The structured coaching took me from barely knowing the rules to playing rated tournaments with real confidence.',
   },
   {
     author: 'Abhay Singh',

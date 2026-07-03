@@ -17,6 +17,8 @@ export interface Coach {
   licenseType: string
   licenseActive: boolean
   licensedSince: string
+  /** Languages of instruction. */
+  languages: string[]
 }
 
 export interface Course {
