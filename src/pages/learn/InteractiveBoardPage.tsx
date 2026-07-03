@@ -6,8 +6,8 @@ import { useChessGame } from '@/features/learn/useChessGame'
 import {
   darkSquareStyle,
   lightSquareStyle,
-  legalDotStyle,
-  legalCaptureStyle,
+  legalDot,
+  legalCapture,
   selectedSquareStyle,
   lastMoveStyle,
   checkSquareStyle,
@@ -39,7 +39,7 @@ export function InteractiveBoardPage() {
     if (selected) styles[selected] = { ...selectedSquareStyle }
     for (const t of targets) {
       const isCapture = game.current.get(t as never)
-      styles[t] = isCapture ? { ...legalCaptureStyle } : { ...legalDotStyle }
+      styles[t] = isCapture ? legalCapture(t) : legalDot(t)
     }
     if (status.inCheck) {
       // Highlight the king in check
@@ -92,8 +92,15 @@ export function InteractiveBoardPage() {
                   setSelected(null)
                 }
               },
+              // Show legal-move dots the moment a piece is picked up to drag.
+              onPieceDrag: ({ square, piece }) => {
+                if (piece && piece.pieceType[0] === status.turn) setSelected(square)
+              },
               onPieceDrop: ({ sourceSquare, targetSquare }) => {
-                if (!targetSquare) return false
+                if (!targetSquare) {
+                  setSelected(null)
+                  return false
+                }
                 return doMove(sourceSquare, targetSquare)
               },
             }}

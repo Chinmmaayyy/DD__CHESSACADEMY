@@ -7,8 +7,8 @@ import { selectAiMove, LEVELS, type Level } from '@/features/learn/engine'
 import {
   darkSquareStyle,
   lightSquareStyle,
-  legalDotStyle,
-  legalCaptureStyle,
+  legalDot,
+  legalCapture,
   selectedSquareStyle,
   lastMoveStyle,
   checkSquareStyle,
@@ -61,7 +61,7 @@ export function PlayVsAIPage() {
     }
     if (selected) styles[selected] = { ...selectedSquareStyle }
     for (const t of targets) {
-      styles[t] = game.current.get(t as never) ? { ...legalCaptureStyle } : { ...legalDotStyle }
+      styles[t] = game.current.get(t as never) ? legalCapture(t) : legalDot(t)
     }
     if (status.inCheck) {
       const board = game.current.board()
@@ -123,8 +123,18 @@ export function PlayVsAIPage() {
                 if (piece && piece.pieceType[0] === status.turn) setSelected(square)
                 else setSelected(null)
               },
-              onPieceDrop: ({ sourceSquare, targetSquare }) =>
-                targetSquare ? doMove(sourceSquare, targetSquare) : false,
+              // Show legal-move dots the moment a piece is picked up to drag.
+              onPieceDrag: ({ square, piece }) => {
+                if (status.turn !== playerColor || thinking) return
+                if (piece && piece.pieceType[0] === status.turn) setSelected(square)
+              },
+              onPieceDrop: ({ sourceSquare, targetSquare }) => {
+                if (!targetSquare) {
+                  setSelected(null)
+                  return false
+                }
+                return doMove(sourceSquare, targetSquare)
+              },
             }}
           />
         </div>

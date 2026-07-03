@@ -1,6 +1,7 @@
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
+import { Chess } from 'chess.js'
 import {
   Lightbulb,
   Eye,
@@ -30,6 +31,8 @@ import {
   lightSquareStyle,
   selectedSquareStyle,
   lastMoveStyle,
+  legalDot,
+  legalCapture,
 } from '@/features/learn/boardTheme'
 import { cn } from '@/lib/utils'
 
@@ -62,15 +65,32 @@ export function PuzzleTrainerPage() {
   const solver = usePuzzleSolver(puzzle)
   const { fen, outcome, wrong, progress, playerMoveCount, lastMove, hintSquare } = solver
 
+  const chess = useMemo(() => new Chess(fen), [fen])
+  const [selected, setSelected] = useState<string | null>(null)
+  const targets = useMemo(
+    () =>
+      selected
+        ? chess.moves({ square: selected as never, verbose: true }).map((m) => m.to as string)
+        : [],
+    [selected, chess],
+  )
+
+  // Clear any selection when the position changes or a new puzzle loads.
+  useEffect(() => setSelected(null), [fen, puzzle.id])
+
   const squareStyles = useMemo(() => {
     const styles: Record<string, CSSProperties> = {}
     if (lastMove) {
       styles[lastMove.from] = { ...lastMoveStyle }
       styles[lastMove.to] = { ...lastMoveStyle }
     }
+    if (selected) styles[selected] = { ...selectedSquareStyle }
+    for (const t of targets) {
+      styles[t] = chess.get(t as never) ? legalCapture(t) : legalDot(t)
+    }
     if (hintSquare) styles[hintSquare] = { ...selectedSquareStyle }
     return styles
-  }, [lastMove, hintSquare])
+  }, [lastMove, hintSquare, selected, targets, chess])
 
   const next = () => {
     setStreak(getStreak())
@@ -113,8 +133,26 @@ export function PuzzleTrainerPage() {
               squareStyles,
               animationDurationInMs: 250,
               allowDragging: !outcome,
-              onPieceDrop: ({ sourceSquare, targetSquare }) =>
-                targetSquare ? solver.attempt(sourceSquare, targetSquare) : false,
+              onSquareClick: ({ square }) => {
+                if (outcome) return
+                if (selected && targets.includes(square)) {
+                  solver.attempt(selected as never, square as never)
+                  setSelected(null)
+                  return
+                }
+                const p = chess.get(square as never)
+                setSelected(p && p.color === chess.turn() ? square : null)
+              },
+              // Show legal-move dots the moment a piece is picked up to drag.
+              onPieceDrag: ({ square }) => {
+                if (outcome) return
+                const p = chess.get(square as never)
+                if (p && p.color === chess.turn()) setSelected(square)
+              },
+              onPieceDrop: ({ sourceSquare, targetSquare }) => {
+                setSelected(null)
+                return targetSquare ? solver.attempt(sourceSquare, targetSquare) : false
+              },
             }}
           />
         </div>
