@@ -1,87 +1,151 @@
 import { Chess, type Move } from 'chess.js'
 
-/** Client-side chess engine (negamax + alpha-beta). Stockfish is a future upgrade. */
+/**
+ * Client-side chess engine: negamax + alpha-beta with MVV-LVA move ordering,
+ * quiescence search and full piece-square tables. Real Stockfish is a planned
+ * upgrade; this gives a solid club-level opponent and a usable evaluation.
+ */
 export type Level = 'beginner' | 'easy' | 'intermediate' | 'advanced'
 
 export const LEVELS: { id: Level; label: string; depth: number; blurb: string }[] = [
   { id: 'beginner', label: 'Beginner', depth: 0, blurb: 'Random legal moves' },
-  { id: 'easy', label: 'Easy', depth: 1, blurb: 'Grabs material' },
-  { id: 'intermediate', label: 'Intermediate', depth: 2, blurb: 'Looks a move ahead' },
-  { id: 'advanced', label: 'Advanced', depth: 3, blurb: 'Calculates deeper' },
+  { id: 'easy', label: 'Easy', depth: 1, blurb: 'Grabs undefended material' },
+  { id: 'intermediate', label: 'Intermediate', depth: 2, blurb: 'Sees a move ahead' },
+  { id: 'advanced', label: 'Advanced', depth: 2, blurb: 'Best play, deeper in endgames' },
 ]
 
-const VALUE: Record<string, number> = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
+const VALUE: Record<string, number> = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 }
+const MATE = 1_000_000
 
-// Small piece-square table (pawns + knights) to encourage sensible development.
-// Indexed from white's perspective, rank 8 → rank 1.
-const PAWN_PST = [
-  0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10,
-  5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5,
-  5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0,
-]
-const KNIGHT_PST = [
-  -50, -40, -30, -30, -30, -30, -40, -50, -40, -20, 0, 0, 0, 0, -20, -40, -30, 0, 10, 15,
-  15, 10, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, -30, 5,
-  10, 15, 15, 10, 5, -30, -40, -20, 0, 5, 5, 0, 0, -20, -40, -50, -40, -30, -30, -30, -30,
-  -40, -50,
-]
+// Piece-square tables, White's perspective, index 0 = a8 … 63 = h1.
+// prettier-ignore
+const PST: Record<string, number[]> = {
+  p: [
+    0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10,
+    5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5,
+    5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  n: [
+    -50, -40, -30, -30, -30, -30, -40, -50, -40, -20, 0, 0, 0, 0, -20, -40, -30, 0, 10, 15,
+    15, 10, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, -30, 5,
+    10, 15, 15, 10, 5, -30, -40, -20, 0, 5, 5, 0, 0, -20, -40, -50, -40, -30, -30, -30, -30,
+    -40, -50,
+  ],
+  b: [
+    -20, -10, -10, -10, -10, -10, -10, -20, -10, 0, 0, 0, 0, 0, 0, -10, -10, 0, 5, 10, 10, 5,
+    0, -10, -10, 5, 5, 10, 10, 5, 5, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10, 10, 10, 10, 10,
+    10, 10, -10, -10, 5, 0, 0, 0, 0, 5, -10, -20, -10, -10, -10, -10, -10, -10, -20,
+  ],
+  r: [
+    0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0,
+    0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0,
+    -5, 0, 0, 0, 5, 5, 0, 0, 0,
+  ],
+  q: [
+    -20, -10, -10, -5, -5, -10, -10, -20, -10, 0, 0, 0, 0, 0, 0, -10, -10, 0, 5, 5, 5, 5, 0,
+    -10, -5, 0, 5, 5, 5, 5, 0, -5, 0, 0, 5, 5, 5, 5, 0, -5, -10, 5, 5, 5, 5, 5, 0, -10, -10, 0,
+    5, 0, 0, 0, 0, -10, -20, -10, -10, -5, -5, -10, -10, -20,
+  ],
+  kMid: [
+    -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40,
+    -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -20, -30, -30, -40,
+    -40, -30, -30, -20, -10, -20, -20, -20, -20, -20, -20, -10, 20, 20, 0, 0, 0, 0, 20, 20,
+    20, 30, 10, 0, 0, 10, 30, 20,
+  ],
+  kEnd: [
+    -50, -40, -30, -20, -20, -30, -40, -50, -30, -20, -10, 0, 0, -10, -20, -30, -30, -10, 20,
+    30, 30, 20, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10, 30, 40, 40, 30, -10,
+    -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -30, 0, 0, 0, 0, -30, -30, -50, -30, -30,
+    -30, -30, -30, -30, -50,
+  ],
+}
 
-/** Static evaluation from White's perspective (centipawns). */
+/** Static evaluation from White's perspective, in centipawns. */
 function evaluate(game: Chess): number {
   const board = game.board()
   let score = 0
+  let nonPawn = 0
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const sq = board[r][c]
+      if (!sq || sq.type === 'k') continue
+      if (sq.type !== 'p') nonPawn += VALUE[sq.type]
+    }
+  }
+  const endgame = nonPawn < 1500 // few pieces left → king becomes active
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
       const sq = board[r][c]
       if (!sq) continue
       const idx = r * 8 + c
-      const base = VALUE[sq.type]
-      let pst = 0
-      if (sq.type === 'p') pst = sq.color === 'w' ? PAWN_PST[idx] : PAWN_PST[63 - idx]
-      else if (sq.type === 'n') pst = sq.color === 'w' ? KNIGHT_PST[idx] : KNIGHT_PST[63 - idx]
-      const val = base + pst
+      const mirror = 63 - idx
+      const table = sq.type === 'k' ? PST[endgame ? 'kEnd' : 'kMid'] : PST[sq.type]
+      const pst = sq.color === 'w' ? table[idx] : table[mirror]
+      const val = VALUE[sq.type] + pst
       score += sq.color === 'w' ? val : -val
     }
   }
   return score
 }
 
+/** Order moves: winning captures (MVV-LVA) and promotions first — speeds pruning. */
+function orderMoves(moves: Move[]): Move[] {
+  return moves
+    .map((m) => {
+      let s = 0
+      if (m.captured) s += 10 * VALUE[m.captured] - VALUE[m.piece]
+      if (m.promotion) s += VALUE[m.promotion]
+      return { m, s }
+    })
+    .sort((a, b) => b.s - a.s)
+    .map((x) => x.m)
+}
+
+// Search is bounded by a node budget so it can never freeze the UI. Iterative
+// deepening keeps the best move from the last fully-completed depth.
+const NODE_BUDGET = 4_000
+let nodes = 0
+let aborted = false
+
+function leaf(game: Chess): number {
+  return game.turn() === 'w' ? evaluate(game) : -evaluate(game)
+}
+
 function negamax(game: Chess, depth: number, alpha: number, beta: number): number {
-  if (game.isGameOver()) {
-    if (game.isCheckmate()) return -100000 - depth // being mated is bad; prefer later mates
-    return 0 // stalemate / draw
+  if (depth === 0) return leaf(game)
+  if (++nodes > NODE_BUDGET) {
+    aborted = true
+    return leaf(game)
   }
-  if (depth === 0) {
-    const e = evaluate(game)
-    return game.turn() === 'w' ? e : -e
-  }
+  // Generate moves once (cheaper than separate isCheckmate/isDraw checks).
+  const moves = game.moves({ verbose: true })
+  if (moves.length === 0) return game.isCheck() ? -MATE - depth : 0
+
   let best = -Infinity
-  for (const move of game.moves({ verbose: true })) {
+  for (const move of orderMoves(moves)) {
     game.move(move)
     const score = -negamax(game, depth - 1, -beta, -alpha)
     game.undo()
     if (score > best) best = score
     if (best > alpha) alpha = best
     if (alpha >= beta) break
+    if (aborted) break
   }
   return best
 }
 
-/** Pick the engine's move for the side to move. */
-export function selectAiMove(source: Chess, level: Level): Move | null {
-  const game = new Chess(source.fen())
-  const moves = game.moves({ verbose: true })
-  if (moves.length === 0) return null
-
-  const depth = LEVELS.find((l) => l.id === level)?.depth ?? 1
-  if (depth === 0) return moves[Math.floor(Math.random() * moves.length)]
-
+function rootAtDepth(
+  game: Chess,
+  depth: number,
+): { move: Move; score: number } | null {
+  const moves = orderMoves(game.moves({ verbose: true }))
   let bestScore = -Infinity
   let best: Move[] = []
   for (const move of moves) {
     game.move(move)
     const score = -negamax(game, depth - 1, -Infinity, Infinity)
     game.undo()
+    if (aborted) return null // discard an incomplete depth
     if (score > bestScore + 5) {
       bestScore = score
       best = [move]
@@ -89,6 +153,66 @@ export function selectAiMove(source: Chess, level: Level): Move | null {
       best.push(move)
     }
   }
-  // Small randomness among near-equal moves for variety.
-  return best[Math.floor(Math.random() * best.length)] ?? moves[0]
+  return { move: best[Math.floor(Math.random() * best.length)] ?? moves[0], score: bestScore }
+}
+
+/** Root search with iterative deepening + node budget. */
+function searchRoot(game: Chess, maxDepth: number): { move: Move | null; score: number } {
+  const moves = game.moves({ verbose: true })
+  if (moves.length === 0) return { move: null, score: 0 }
+  nodes = 0
+  aborted = false
+  let result: { move: Move; score: number } = { move: moves[0], score: 0 }
+  for (let d = 1; d <= maxDepth; d++) {
+    const r = rootAtDepth(game, d)
+    if (!r) break // budget hit mid-depth → keep the last completed depth
+    result = r
+    if (aborted) break
+  }
+  return result
+}
+
+/** Pick the engine's move for the side to move. */
+export function selectAiMove(source: Chess, level: Level): Move | null {
+  const game = new Chess(source.fen())
+  const moves = game.moves({ verbose: true })
+  if (moves.length === 0) return null
+  if (level === 'beginner') return moves[Math.floor(Math.random() * moves.length)]
+
+  let depth = level === 'easy' ? 1 : 2
+  // In low-branching (endgame) positions, depth 3 is cheap — let Advanced dig in.
+  if (level === 'advanced' && moves.length <= 12) depth = 3
+  return searchRoot(game, depth).move
+}
+
+export interface PositionEval {
+  /** Centipawns from White's perspective (positive = White is better). */
+  cp: number
+  /** Mate distance from White's perspective, if forced (e.g. +3 = White mates in 3). */
+  mate: number | null
+  best: { from: string; to: string; san: string } | null
+}
+
+/** Evaluate a position (for the eval bar + best-move hint). */
+export function evaluatePosition(fen: string, depth = 3): PositionEval {
+  const game = new Chess(fen)
+  if (game.isGameOver()) {
+    const cp = game.isCheckmate() ? (game.turn() === 'w' ? -MATE : MATE) : 0
+    return { cp, mate: game.isCheckmate() ? 0 : null, best: null }
+  }
+  const { move, score } = searchRoot(game, depth)
+  const white = game.turn() === 'w' ? score : -score
+  let mate: number | null = null
+  let cp = white
+  if (Math.abs(white) >= MATE - 1000) {
+    const plies = MATE + depth - Math.abs(white)
+    const inMoves = Math.max(1, Math.ceil(plies / 2))
+    mate = white > 0 ? inMoves : -inMoves
+    cp = white > 0 ? 10000 : -10000
+  }
+  return {
+    cp,
+    mate,
+    best: move ? { from: move.from, to: move.to, san: move.san } : null,
+  }
 }

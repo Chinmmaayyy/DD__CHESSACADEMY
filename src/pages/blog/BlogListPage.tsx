@@ -41,7 +41,7 @@ export function BlogListPage() {
                     src={post.cover}
                     alt={post.title}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover object-[50%_25%] transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy-900/50 to-transparent" />
                   <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">

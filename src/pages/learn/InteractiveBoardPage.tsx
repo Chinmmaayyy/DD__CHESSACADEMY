@@ -1,8 +1,9 @@
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Chessboard } from 'react-chessboard'
-import { RotateCcw, RefreshCw, FlipVertical2, Copy, Check } from 'lucide-react'
+import { RotateCcw, RefreshCw, FlipVertical2, Copy, Check, Lightbulb } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { useChessGame } from '@/features/learn/useChessGame'
+import { evaluatePosition, type PositionEval } from '@/features/learn/engine'
 import {
   darkSquareStyle,
   lightSquareStyle,
@@ -20,8 +21,23 @@ export function InteractiveBoardPage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
   const [copied, setCopied] = useState<'fen' | 'pgn' | null>(null)
+  const [analysis, setAnalysis] = useState<PositionEval | null>(null)
+  const [analyzing, setAnalyzing] = useState(false)
+  const [showBest, setShowBest] = useState(false)
 
   const targets = selected ? legalTargets(selected) : []
+
+  // Engine analysis for the eval bar + best-move hint (deferred so it never
+  // blocks the move animation).
+  useEffect(() => {
+    setAnalyzing(true)
+    setShowBest(false)
+    const t = window.setTimeout(() => {
+      setAnalysis(evaluatePosition(fen, 2))
+      setAnalyzing(false)
+    }, 40)
+    return () => window.clearTimeout(t)
+  }, [fen])
 
   const doMove = (from: string, to: string) => {
     const result = move({ from, to, promotion: 'q' })
@@ -52,8 +68,12 @@ export function InteractiveBoardPage() {
           }
         }
     }
+    if (showBest && analysis?.best) {
+      styles[analysis.best.from] = { backgroundColor: 'rgba(59,130,246,0.45)' }
+      styles[analysis.best.to] = { backgroundColor: 'rgba(59,130,246,0.5)' }
+    }
     return styles
-  }, [selected, targets, lastMove, status.inCheck, status.turn, game])
+  }, [selected, targets, lastMove, status.inCheck, status.turn, game, showBest, analysis])
 
   const copy = (text: string, which: 'fen' | 'pgn') => {
     navigator.clipboard?.writeText(text)
@@ -71,7 +91,9 @@ export function InteractiveBoardPage() {
     <Container className="py-8 lg:py-12">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         {/* Board */}
-        <div className="mx-auto w-full max-w-[560px]">
+        <div className="mx-auto flex w-full max-w-[600px] items-stretch gap-3">
+          <EvalBar evaluation={analysis} orientation={orientation} analyzing={analyzing} />
+          <div className="min-w-0 flex-1">
           <Chessboard
             options={{
               id: 'analysis-board',
@@ -105,6 +127,7 @@ export function InteractiveBoardPage() {
               },
             }}
           />
+          </div>
         </div>
 
         {/* Panel */}
@@ -121,6 +144,17 @@ export function InteractiveBoardPage() {
                     ? `${status.turn === 'w' ? 'White' : 'Black'} to move · Check`
                     : `${status.turn === 'w' ? 'White' : 'Black'} to move`}
             </p>
+            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
+              <span className="text-xs uppercase tracking-wider text-white/50">Engine eval</span>
+              <span className="font-display text-lg text-white tnum">
+                {analyzing || !analysis ? '…' : formatEval(analysis)}
+              </span>
+            </div>
+            {analysis?.best && !status.isGameOver && (
+              <p className="mt-1 text-xs text-white/60">
+                Best move: <span className="font-semibold text-gold-400">{analysis.best.san}</span>
+              </p>
+            )}
           </div>
 
           {/* Controls */}
@@ -141,6 +175,14 @@ export function InteractiveBoardPage() {
               {copied === 'fen' ? 'Copied' : 'FEN'}
             </ControlButton>
           </div>
+          <ControlButton
+            onClick={() => setShowBest((v) => !v)}
+            icon={Lightbulb}
+            disabled={!analysis?.best || status.isGameOver}
+            full
+          >
+            {showBest ? 'Hide best move' : 'Show best move'}
+          </ControlButton>
           <ControlButton onClick={() => copy(game.current.pgn(), 'pgn')} icon={copied === 'pgn' ? Check : Copy} full>
             {copied === 'pgn' ? 'PGN copied' : 'Copy PGN'}
           </ControlButton>
@@ -165,6 +207,68 @@ export function InteractiveBoardPage() {
         </aside>
       </div>
     </Container>
+  )
+}
+
+/** "+1.4", "-0.7", or "M3" from White's perspective. */
+function formatEval(e: PositionEval): string {
+  if (e.mate != null) return e.mate === 0 ? '#' : `M${Math.abs(e.mate)}`
+  const v = e.cp / 100
+  return `${v >= 0 ? '+' : ''}${v.toFixed(1)}`
+}
+
+/** Vertical evaluation bar — white advantage fills from White's side. */
+function EvalBar({
+  evaluation,
+  orientation,
+  analyzing,
+}: {
+  evaluation: PositionEval | null
+  orientation: 'white' | 'black'
+  analyzing: boolean
+}) {
+  const cp = evaluation?.cp ?? 0
+  const mate = evaluation?.mate ?? null
+  // Win-probability-style curve; clamp so both sides always show a sliver.
+  let whiteRatio =
+    mate != null ? (mate > 0 ? 1 : mate < 0 ? 0 : 0.5) : 1 / (1 + Math.pow(10, -cp / 400))
+  whiteRatio = Math.min(0.98, Math.max(0.02, whiteRatio))
+  const whitePct = `${whiteRatio * 100}%`
+
+  const label = evaluation && !analyzing ? formatEval(evaluation) : ''
+  const whiteWinning = mate != null ? mate > 0 : cp >= 0
+
+  return (
+    <div
+      className="relative hidden w-6 shrink-0 overflow-hidden rounded-md bg-navy-900 sm:block"
+      aria-label="Engine evaluation"
+      title={label ? `Evaluation: ${label}` : 'Analyzing…'}
+    >
+      {/* White fill (from the side White is on) */}
+      <div
+        className="absolute inset-x-0 bg-white transition-[height] duration-500 ease-out"
+        style={
+          orientation === 'white'
+            ? { bottom: 0, height: whitePct }
+            : { top: 0, height: whitePct }
+        }
+      />
+      {label && (
+        <span
+          className={`absolute inset-x-0 text-center text-[9px] font-bold tabular-nums ${
+            whiteWinning
+              ? orientation === 'white'
+                ? 'bottom-0.5 text-navy-900'
+                : 'top-0.5 text-navy-900'
+              : orientation === 'white'
+                ? 'top-0.5 text-white'
+                : 'bottom-0.5 text-white'
+          }`}
+        >
+          {label}
+        </span>
+      )}
+    </div>
   )
 }
 

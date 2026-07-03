@@ -92,7 +92,11 @@ export function BlogPostPage() {
     <article className="bg-canvas pb-20 lg:pb-28">
       {/* Cover */}
       <div className="relative h-[42vh] min-h-[280px] w-full overflow-hidden">
-        <img src={post.cover} alt={post.title} className="h-full w-full object-cover" />
+        <img
+          src={post.cover}
+          alt={post.title}
+          className="h-full w-full object-cover object-[50%_25%]"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/40 to-navy-900/30" />
         <Container className="absolute inset-x-0 bottom-0 pb-8">
           <div className="max-w-3xl">
