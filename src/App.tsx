@@ -23,6 +23,12 @@ const PuzzleTrainerPage = lazy(() =>
 const PuzzleLibraryPage = lazy(() =>
   import('@/pages/learn/PuzzleLibraryPage').then((m) => ({ default: m.PuzzleLibraryPage })),
 )
+const BlogListPage = lazy(() =>
+  import('@/pages/blog/BlogListPage').then((m) => ({ default: m.BlogListPage })),
+)
+const BlogPostPage = lazy(() =>
+  import('@/pages/blog/BlogPostPage').then((m) => ({ default: m.BlogPostPage })),
+)
 
 /** Reset scroll on route change (but keep in-page hash anchors working). */
 function ScrollReset() {
@@ -65,6 +71,22 @@ function App() {
       <Routes>
         <Route element={<MarketingLayout />}>
           <Route index element={<HomePage />} />
+          <Route
+            path="blog"
+            element={
+              <Suspense fallback={<LearnFallback />}>
+                <BlogListPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="blog/:slug"
+            element={
+              <Suspense fallback={<LearnFallback />}>
+                <BlogPostPage />
+              </Suspense>
+            }
+          />
         </Route>
 
         <Route

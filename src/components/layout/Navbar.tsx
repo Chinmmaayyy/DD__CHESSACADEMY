@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X, Crown, Gamepad2 } from 'lucide-react'
+import { Menu, X, Crown, Gamepad2, BookOpen } from 'lucide-react'
 import { navLinks } from '@/data/nav'
 import { ACADEMY, WHATSAPP_DEFAULT_MESSAGE } from '@/lib/constants'
 import { whatsappLink, cn } from '@/lib/utils'
@@ -48,7 +48,7 @@ export function Navbar() {
     >
       <nav className="container-x flex h-16 items-center justify-between gap-4 lg:h-20 lg:gap-8">
         {/* Logo */}
-        <a href="#top" className="flex shrink-0 items-center gap-2.5" aria-label="DD Chess Academy home">
+        <a href="/#top" className="flex shrink-0 items-center gap-2.5" aria-label="DD Chess Academy home">
           <span className="grid size-9 place-items-center rounded-[10px] bg-gold-500 text-navy-900">
             <Crown className="size-5" strokeWidth={2} />
           </span>
@@ -69,7 +69,7 @@ export function Navbar() {
             return (
               <li key={link.href}>
                 <a
-                  href={link.href}
+                  href={`/${link.href}`}
                   className={cn(
                     'relative text-sm font-medium transition-colors hover:text-accent',
                     isActive ? 'text-accent' : 'text-content',
@@ -90,6 +90,12 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden shrink-0 items-center gap-3 lg:flex xl:gap-4">
+          <Link
+            to="/blog"
+            className="text-sm font-semibold text-heading transition-colors hover:text-accent"
+          >
+            Blog
+          </Link>
           <Link
             to="/learn"
             className="flex items-center gap-1.5 text-sm font-semibold text-heading transition-colors hover:text-accent"
@@ -131,7 +137,7 @@ export function Navbar() {
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
-                    href={link.href}
+                    href={`/${link.href}`}
                     onClick={() => setOpen(false)}
                     className="block rounded-lg px-3 py-3 text-base font-medium text-content hover:bg-surface-2"
                   >
@@ -139,6 +145,16 @@ export function Navbar() {
                   </a>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/blog"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-content hover:bg-surface-2"
+                >
+                  <BookOpen className="size-5" />
+                  Blog
+                </Link>
+              </li>
               <li>
                 <Link
                   to="/learn"

@@ -1,4 +1,5 @@
 import { Crown, Camera, Globe, Play, Phone, Mail, MapPin } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Container } from '@/components/ui/Container'
 import { navLinks } from '@/data/nav'
 import { branches } from '@/data/branches'
@@ -51,13 +52,23 @@ export function Footer() {
             <ul className="mt-4 space-y-2.5 text-sm">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="transition-colors hover:text-gold-400">
+                  <a href={`/${l.href}`} className="transition-colors hover:text-gold-400">
                     {l.label}
                   </a>
                 </li>
               ))}
               <li>
-                <a href="#contact" className="transition-colors hover:text-gold-400">
+                <Link to="/blog" className="transition-colors hover:text-gold-400">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/learn" className="transition-colors hover:text-gold-400">
+                  Play &amp; Learn
+                </Link>
+              </li>
+              <li>
+                <a href="/#contact" className="transition-colors hover:text-gold-400">
                   Enquire
                 </a>
               </li>

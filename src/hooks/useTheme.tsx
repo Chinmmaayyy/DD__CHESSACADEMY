@@ -20,12 +20,11 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
-/** Resolve the initial theme: stored preference → system preference → light. */
+/** Resolve the initial theme: stored preference, otherwise default to light. */
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'light'
   const stored = window.localStorage.getItem(STORAGE_KEY)
-  if (stored === 'light' || stored === 'dark') return stored
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return stored === 'dark' ? 'dark' : 'light'
 }
 
 function applyTheme(theme: Theme) {
@@ -42,15 +41,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyTheme(theme)
     window.localStorage.setItem(STORAGE_KEY, theme)
   }, [theme])
-
-  // Follow the OS preference until the user makes an explicit choice this session.
-  useEffect(() => {
-    if (window.localStorage.getItem(STORAGE_KEY)) return
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = (e: MediaQueryListEvent) => setThemeState(e.matches ? 'dark' : 'light')
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
 
   const setTheme = useCallback((t: Theme) => setThemeState(t), [])
   const toggle = useCallback(() => setThemeState((t) => (t === 'dark' ? 'light' : 'dark')), [])
