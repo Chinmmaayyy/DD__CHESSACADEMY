@@ -43,11 +43,11 @@ export function PuzzleLibraryPage() {
     <Container className="py-8 lg:py-12">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <span className="eyebrow text-gold-400">Puzzle Library</span>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-white">
+          <span className="eyebrow text-accent">Puzzle Library</span>
+          <h1 className="mt-2 font-display text-3xl font-semibold text-heading">
             {allPuzzles.length} tactics to master
           </h1>
-          <p className="mt-1 text-white/60">
+          <p className="mt-1 text-muted">
             {solvedSet.size} solved · {allPuzzles.length - solvedSet.size} remaining
           </p>
         </div>
@@ -61,15 +61,15 @@ export function PuzzleLibraryPage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-navy-800/50 p-4 lg:flex-row lg:items-center">
+      <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-hairline bg-surface p-4 lg:flex-row lg:items-center">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search rating, theme, number…"
-            className="w-full rounded-xl border border-white/10 bg-navy-900/60 py-2.5 pl-9 pr-4 text-sm text-white placeholder:text-white/40 focus:border-gold-500/50 focus:outline-none"
+            className="w-full rounded-xl border border-hairline bg-surface py-2.5 pl-9 pr-4 text-sm text-heading placeholder:text-muted focus:border-gold-500/50 focus:outline-none"
           />
         </div>
 
@@ -83,7 +83,7 @@ export function PuzzleLibraryPage() {
                 'rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
                 tier === t
                   ? 'bg-gold-500 text-navy-900'
-                  : 'bg-white/5 text-white/70 hover:bg-white/10',
+                  : 'bg-surface-2 text-muted hover:bg-surface-2',
               )}
             >
               {t}
@@ -95,7 +95,7 @@ export function PuzzleLibraryPage() {
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
-          className="rounded-lg border border-white/10 bg-navy-900/60 px-3 py-2 text-sm text-white focus:border-gold-500/50 focus:outline-none"
+          className="rounded-lg border border-hairline bg-surface px-3 py-2 text-sm text-heading focus:border-gold-500/50 focus:outline-none"
         >
           <option value="all">All themes</option>
           {allThemes.map((t) => (
@@ -114,8 +114,8 @@ export function PuzzleLibraryPage() {
               className={cn(
                 'rounded-lg px-3 py-2 text-xs font-semibold capitalize transition-colors',
                 solved === s
-                  ? 'bg-white/15 text-white'
-                  : 'bg-white/5 text-white/60 hover:bg-white/10',
+                  ? 'bg-gold-500 text-navy-900'
+                  : 'bg-surface-2 text-muted hover:bg-surface-2',
               )}
             >
               {s}
@@ -126,7 +126,7 @@ export function PuzzleLibraryPage() {
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <p className="py-16 text-center text-white/50">No puzzles match these filters.</p>
+        <p className="py-16 text-center text-muted">No puzzles match these filters.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => {
@@ -135,14 +135,14 @@ export function PuzzleLibraryPage() {
               <Link
                 key={p.id}
                 to={`/learn/puzzles?id=${p.id}`}
-                className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-navy-800/50 p-4 transition-all hover:-translate-y-0.5 hover:border-gold-500/40"
+                className="group flex items-center gap-4 rounded-2xl border border-hairline bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-gold-500/40"
               >
                 <span
                   className={cn(
                     'grid size-11 shrink-0 place-items-center rounded-xl font-display text-lg font-semibold',
                     isSolved
                       ? 'bg-success/15 text-success'
-                      : 'bg-white/5 text-white/70',
+                      : 'bg-surface-2 text-muted',
                   )}
                 >
                   {isSolved ? <Check className="size-5" /> : `#${p.n}`}
@@ -152,13 +152,13 @@ export function PuzzleLibraryPage() {
                     <span className={cn('font-bold uppercase tracking-wide', tierColor(p.tier))}>
                       {p.tier}
                     </span>
-                    <span className="text-white/40 tnum">· {p.rating}</span>
+                    <span className="text-muted tnum">· {p.rating}</span>
                   </p>
-                  <p className="truncate text-sm text-white/70">
+                  <p className="truncate text-sm text-muted">
                     {p.themes.slice(0, 2).map(prettyTheme).join(' · ') || 'Tactics'}
                   </p>
                 </div>
-                <ChevronRight className="size-4 shrink-0 text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-gold-400" />
+                <ChevronRight className="size-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
               </Link>
             )
           })}

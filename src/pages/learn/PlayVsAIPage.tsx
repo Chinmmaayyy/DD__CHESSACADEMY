@@ -142,16 +142,16 @@ export function PlayVsAIPage() {
         {/* Panel */}
         <aside className="flex flex-col gap-4">
           {/* Result / turn */}
-          <div className="rounded-2xl border border-white/10 bg-navy-800/60 p-5">
+          <div className="rounded-2xl border border-hairline bg-surface p-5">
             {resultText ? (
               <div className="flex items-center gap-3">
-                <Trophy className="size-6 text-gold-400" />
-                <p className="font-display text-xl text-white">{resultText}</p>
+                <Trophy className="size-6 text-accent" />
+                <p className="font-display text-xl text-heading">{resultText}</p>
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                {thinking && <Loader2 className="size-5 animate-spin text-gold-400" />}
-                <p className="font-display text-xl text-white">
+                {thinking && <Loader2 className="size-5 animate-spin text-accent" />}
+                <p className="font-display text-xl text-heading">
                   {thinking
                     ? 'Computer is thinking…'
                     : status.turn === playerColor
@@ -163,8 +163,8 @@ export function PlayVsAIPage() {
           </div>
 
           {/* Difficulty */}
-          <div className="rounded-2xl border border-white/10 bg-navy-800/60 p-4">
-            <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Difficulty</p>
+          <div className="rounded-2xl border border-hairline bg-surface p-4">
+            <p className="mb-3 text-xs uppercase tracking-wider text-muted">Difficulty</p>
             <div className="grid grid-cols-2 gap-2">
               {LEVELS.map((l) => (
                 <button
@@ -174,7 +174,7 @@ export function PlayVsAIPage() {
                     'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     level === l.id
                       ? 'bg-gold-500 text-navy-900'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10',
+                      : 'bg-surface-2 text-muted hover:bg-surface-2',
                   )}
                   title={l.blurb}
                 >
@@ -185,8 +185,8 @@ export function PlayVsAIPage() {
           </div>
 
           {/* Play as */}
-          <div className="rounded-2xl border border-white/10 bg-navy-800/60 p-4">
-            <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Play as</p>
+          <div className="rounded-2xl border border-hairline bg-surface p-4">
+            <p className="mb-3 text-xs uppercase tracking-wider text-muted">Play as</p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => newGame('w')}
@@ -194,7 +194,7 @@ export function PlayVsAIPage() {
                   'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   playerColor === 'w'
                     ? 'bg-white text-navy-900'
-                    : 'bg-white/5 text-white/70 hover:bg-white/10',
+                    : 'bg-surface-2 text-muted hover:bg-surface-2',
                 )}
               >
                 White
@@ -204,8 +204,8 @@ export function PlayVsAIPage() {
                 className={cn(
                   'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   playerColor === 'b'
-                    ? 'bg-navy-600 text-white ring-1 ring-white/30'
-                    : 'bg-white/5 text-white/70 hover:bg-white/10',
+                    ? 'bg-navy-900 text-white ring-1 ring-white/30'
+                    : 'bg-surface-2 text-muted hover:bg-surface-2',
                 )}
               >
                 Black
@@ -218,14 +218,14 @@ export function PlayVsAIPage() {
             <button
               onClick={takeback}
               disabled={history.length === 0 || thinking}
-              className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-navy-800/60 px-4 py-3 text-sm font-medium text-white/85 transition-colors hover:border-gold-500/40 disabled:opacity-40"
+              className="flex items-center justify-center gap-2 rounded-xl border border-hairline bg-surface px-4 py-3 text-sm font-medium text-content transition-colors hover:border-gold-500/40 disabled:opacity-40"
             >
               <RotateCcw className="size-4" />
               Take back
             </button>
             <button
               onClick={() => newGame()}
-              className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-navy-800/60 px-4 py-3 text-sm font-medium text-white/85 transition-colors hover:border-gold-500/40"
+              className="flex items-center justify-center gap-2 rounded-xl border border-hairline bg-surface px-4 py-3 text-sm font-medium text-content transition-colors hover:border-gold-500/40"
             >
               <RefreshCw className="size-4" />
               New game

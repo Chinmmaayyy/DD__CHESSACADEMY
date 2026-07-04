@@ -133,9 +133,9 @@ export function InteractiveBoardPage() {
         {/* Panel */}
         <aside className="flex flex-col gap-4">
           {/* Status */}
-          <div className="rounded-2xl border border-white/10 bg-navy-800/60 p-5">
-            <p className="text-xs uppercase tracking-wider text-white/50">Status</p>
-            <p className="mt-1 font-display text-xl text-white">
+          <div className="rounded-2xl border border-hairline bg-surface p-5">
+            <p className="text-xs uppercase tracking-wider text-muted">Status</p>
+            <p className="mt-1 font-display text-xl text-heading">
               {status.isCheckmate
                 ? `Checkmate — ${status.winner} wins`
                 : status.isDraw
@@ -144,15 +144,15 @@ export function InteractiveBoardPage() {
                     ? `${status.turn === 'w' ? 'White' : 'Black'} to move · Check`
                     : `${status.turn === 'w' ? 'White' : 'Black'} to move`}
             </p>
-            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
-              <span className="text-xs uppercase tracking-wider text-white/50">Engine eval</span>
-              <span className="font-display text-lg text-white tnum">
+            <div className="mt-3 flex items-center justify-between border-t border-hairline pt-3">
+              <span className="text-xs uppercase tracking-wider text-muted">Engine eval</span>
+              <span className="font-display text-lg text-heading tnum">
                 {analyzing || !analysis ? '…' : formatEval(analysis)}
               </span>
             </div>
             {analysis?.best && !status.isGameOver && (
-              <p className="mt-1 text-xs text-white/60">
-                Best move: <span className="font-semibold text-gold-400">{analysis.best.san}</span>
+              <p className="mt-1 text-xs text-muted">
+                Best move: <span className="font-semibold text-accent">{analysis.best.san}</span>
               </p>
             )}
           </div>
@@ -188,15 +188,15 @@ export function InteractiveBoardPage() {
           </ControlButton>
 
           {/* Move list */}
-          <div className="min-h-[140px] flex-1 rounded-2xl border border-white/10 bg-navy-800/60 p-4">
-            <p className="mb-2 text-xs uppercase tracking-wider text-white/50">Moves</p>
+          <div className="min-h-[140px] flex-1 rounded-2xl border border-hairline bg-surface p-4">
+            <p className="mb-2 text-xs uppercase tracking-wider text-muted">Moves</p>
             {history.length === 0 ? (
-              <p className="text-sm text-white/40">Make a move to begin.</p>
+              <p className="text-sm text-muted">Make a move to begin.</p>
             ) : (
-              <ol className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-white/80 tnum">
+              <ol className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-content tnum">
                 {Array.from({ length: Math.ceil(history.length / 2) }).map((_, i) => (
                   <li key={i} className="flex gap-2">
-                    <span className="w-6 text-white/40">{i + 1}.</span>
+                    <span className="w-6 text-muted">{i + 1}.</span>
                     <span className="flex-1">{history[i * 2]}</span>
                     <span className="flex-1">{history[i * 2 + 1] ?? ''}</span>
                   </li>
@@ -290,7 +290,7 @@ function ControlButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-navy-800/60 px-4 py-3 text-sm font-medium text-white/85 transition-colors hover:border-gold-500/40 hover:text-white disabled:opacity-40',
+        'flex items-center justify-center gap-2 rounded-xl border border-hairline bg-surface px-4 py-3 text-sm font-medium text-content transition-colors hover:border-gold-500/40 hover:text-heading disabled:opacity-40',
         full && 'w-full',
       )}
     >
