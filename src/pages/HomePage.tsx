@@ -6,7 +6,6 @@ import { Schools } from '@/sections/Schools'
 import { Achievements } from '@/sections/Achievements'
 import { Gallery } from '@/sections/Gallery'
 import { Testimonials } from '@/sections/Testimonials'
-import { Events } from '@/sections/Events'
 import { Branches } from '@/sections/Branches'
 import { Faq } from '@/sections/Faq'
 import { BlogTeaser } from '@/sections/BlogTeaser'
@@ -23,7 +22,6 @@ export function HomePage() {
       <Achievements />
       <Gallery />
       <Testimonials />
-      <Events />
       <Branches />
       <Faq />
       <BlogTeaser />
