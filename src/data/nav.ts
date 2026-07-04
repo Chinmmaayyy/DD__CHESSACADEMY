@@ -6,7 +6,7 @@ export interface NavLink {
 /** Anchor-based navigation for the single-page premium homepage. */
 export const navLinks: NavLink[] = [
   { label: 'Coach', href: '#coach' },
-  { label: 'Courses', href: '#courses' },
+  { label: 'Schools', href: '#schools' },
   { label: 'Gallery', href: '#gallery' },
   { label: 'Events', href: '#events' },
   { label: 'Locations', href: '#branches' },
