@@ -29,6 +29,9 @@ const BlogListPage = lazy(() =>
 const BlogPostPage = lazy(() =>
   import('@/pages/blog/BlogPostPage').then((m) => ({ default: m.BlogPostPage })),
 )
+const GalleryPage = lazy(() =>
+  import('@/pages/GalleryPage').then((m) => ({ default: m.GalleryPage })),
+)
 
 /** Reset scroll on route change (but keep in-page hash anchors working). */
 function ScrollReset() {
@@ -84,6 +87,14 @@ function App() {
             element={
               <Suspense fallback={<LearnFallback />}>
                 <BlogPostPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="gallery"
+            element={
+              <Suspense fallback={<LearnFallback />}>
+                <GalleryPage />
               </Suspense>
             }
           />

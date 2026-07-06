@@ -2,6 +2,7 @@ import { Hero } from '@/sections/Hero'
 import { Stats } from '@/sections/Stats'
 import { WhyChoose } from '@/sections/WhyChoose'
 import { Coach } from '@/sections/Coach'
+import { Instructors } from '@/sections/Instructors'
 import { Schools } from '@/sections/Schools'
 import { Achievements } from '@/sections/Achievements'
 import { Gallery } from '@/sections/Gallery'
@@ -18,6 +19,7 @@ export function HomePage() {
       <Stats />
       <WhyChoose />
       <Coach />
+      <Instructors />
       <Schools />
       <Achievements />
       <Gallery />
