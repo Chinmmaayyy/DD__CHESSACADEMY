@@ -10,7 +10,7 @@ import { useActiveSection } from '@/hooks/useActiveSection'
 import { Button } from '@/components/ui/Button'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
-const anchorHrefs = navLinks.map((l) => l.href)
+const anchorHrefs = navLinks.filter((l) => !l.route).map((l) => l.href)
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -65,24 +65,28 @@ export function Navbar() {
         {/* Desktop links */}
         <ul className="hidden items-center gap-5 xl:gap-7 lg:flex">
           {navLinks.map((link) => {
-            const isActive = active === link.href.replace('#', '')
+            const isActive = !link.route && active === link.href.replace('#', '')
+            const cls = 'relative text-sm font-medium transition-colors hover:text-accent'
             return (
               <li key={link.href}>
-                <a
-                  href={`/${link.href}`}
-                  className={cn(
-                    'relative text-sm font-medium transition-colors hover:text-accent',
-                    isActive ? 'text-accent' : 'text-content',
-                  )}
-                >
-                  {link.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-underline"
-                      className="absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-gold-500"
-                    />
-                  )}
-                </a>
+                {link.route ? (
+                  <Link to={link.href} className={cn(cls, 'text-content')}>
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={`/${link.href}`}
+                    className={cn(cls, isActive ? 'text-accent' : 'text-content')}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-underline"
+                        className="absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-gold-500"
+                      />
+                    )}
+                  </a>
+                )}
               </li>
             )
           })}
@@ -136,13 +140,23 @@ export function Navbar() {
             <ul className="container-x flex flex-col gap-1 py-4">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={`/${link.href}`}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-lg px-3 py-3 text-base font-medium text-content hover:bg-surface-2"
-                  >
-                    {link.label}
-                  </a>
+                  {link.route ? (
+                    <Link
+                      to={link.href}
+                      onClick={() => setOpen(false)}
+                      className="block rounded-lg px-3 py-3 text-base font-medium text-content hover:bg-surface-2"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={`/${link.href}`}
+                      onClick={() => setOpen(false)}
+                      className="block rounded-lg px-3 py-3 text-base font-medium text-content hover:bg-surface-2"
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
               <li>
