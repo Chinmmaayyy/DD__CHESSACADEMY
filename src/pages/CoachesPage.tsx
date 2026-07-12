@@ -1,8 +1,7 @@
-import { Section } from '@/components/ui/Section'
 import { Container } from '@/components/ui/Container'
-import { SectionHeading } from '@/components/ui/SectionHeading'
 import { Reveal } from '@/components/ui/Reveal'
 import { instructors } from '@/data/instructors'
+import { useDocumentMeta } from '@/hooks/useDocumentMeta'
 
 function Rating({ label, value }: { label: string; value?: number }) {
   return (
@@ -13,15 +12,27 @@ function Rating({ label, value }: { label: string; value?: number }) {
   )
 }
 
-export function Instructors() {
+export function CoachesPage() {
+  useDocumentMeta({
+    title: 'Our Coaches | DD Chess Academy, Dombivli',
+    description:
+      'Meet the DD Chess Academy coaching team — a National Arbiter, FIDE Trainer and rated coaches leading structured chess training across Dombivli and the Kalyan region.',
+    canonicalPath: '/coaches',
+  })
+
   return (
-    <Section id="instructors" tone="light">
+    <div className="bg-canvas pb-20 pt-28 lg:pb-28 lg:pt-36">
       <Container>
-        <SectionHeading
-          eyebrow="👥 Our Team"
-          title="Meet Our Instructors"
-          description="A dedicated, rated coaching team that makes professional chess training warm, structured and genuinely enjoyable for every student."
-        />
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow inline-flex items-center gap-2 text-accent">👥 Our Team</span>
+          <h1 className="mt-4 text-[clamp(2rem,4vw,3rem)] font-semibold text-heading">
+            Meet Our Coaches
+          </h1>
+          <p className="mt-4 text-[17px] leading-relaxed text-muted">
+            A dedicated, rated coaching team that makes professional chess training warm,
+            structured and genuinely enjoyable for every student.
+          </p>
+        </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {instructors.map((person, i) => (
@@ -57,7 +68,7 @@ export function Instructors() {
 
                 {/* Details */}
                 <div className="flex flex-1 flex-col p-6">
-                  <h3 className="font-display text-xl font-semibold text-heading">{person.name}</h3>
+                  <h2 className="font-display text-xl font-semibold text-heading">{person.name}</h2>
                   <p className="mt-0.5 text-sm font-semibold text-accent">{person.title}</p>
 
                   {person.ratings && (
@@ -77,6 +88,6 @@ export function Instructors() {
           ))}
         </div>
       </Container>
-    </Section>
+    </div>
   )
 }

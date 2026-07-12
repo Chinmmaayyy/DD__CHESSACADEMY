@@ -32,6 +32,9 @@ const BlogPostPage = lazy(() =>
 const GalleryPage = lazy(() =>
   import('@/pages/GalleryPage').then((m) => ({ default: m.GalleryPage })),
 )
+const CoachesPage = lazy(() =>
+  import('@/pages/CoachesPage').then((m) => ({ default: m.CoachesPage })),
+)
 
 /** Reset scroll on route change (but keep in-page hash anchors working). */
 function ScrollReset() {
@@ -95,6 +98,14 @@ function App() {
             element={
               <Suspense fallback={<LearnFallback />}>
                 <GalleryPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="coaches"
+            element={
+              <Suspense fallback={<LearnFallback />}>
+                <CoachesPage />
               </Suspense>
             }
           />
