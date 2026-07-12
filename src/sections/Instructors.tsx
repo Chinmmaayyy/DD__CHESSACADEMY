@@ -4,6 +4,15 @@ import { SectionHeading } from '@/components/ui/SectionHeading'
 import { Reveal } from '@/components/ui/Reveal'
 import { instructors } from '@/data/instructors'
 
+function Rating({ label, value }: { label: string; value?: number }) {
+  return (
+    <div className="rounded-xl border border-hairline bg-surface-2 px-2 py-1.5 text-center">
+      <p className="font-display text-base font-semibold text-heading tnum">{value ?? '—'}</p>
+      <p className="text-[10px] uppercase tracking-wider text-muted">{label}</p>
+    </div>
+  )
+}
+
 export function Instructors() {
   return (
     <Section id="instructors" tone="light">
@@ -11,17 +20,18 @@ export function Instructors() {
         <SectionHeading
           eyebrow="👥 Our Team"
           title="Meet Our Instructors"
-          description="A dedicated coaching team that makes professional chess training warm, structured and genuinely enjoyable for every student."
+          description="A dedicated, rated coaching team that makes professional chess training warm, structured and genuinely enjoyable for every student."
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {instructors.map((person, i) => (
-            <Reveal key={`${person.name}-${i}`} delay={(i % 3) * 0.08} className="h-full">
+            <Reveal key={person.name} delay={(i % 3) * 0.08} className="h-full">
               <div className="flex h-full flex-col items-center rounded-[22px] border border-hairline bg-surface p-7 text-center shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-medium)]">
                 {person.photo ? (
                   <img
                     src={person.photo}
                     alt={person.name}
+                    loading="lazy"
                     className="size-24 rounded-full border-2 border-gold-500/40 object-cover object-top"
                   />
                 ) : (
@@ -48,7 +58,17 @@ export function Instructors() {
                   </div>
                 )}
 
-                <p className="mt-4 text-sm leading-relaxed text-muted">{person.blurb}</p>
+                {person.ratings && (
+                  <div className="mt-4 grid w-full grid-cols-3 gap-2">
+                    <Rating label="Std" value={person.ratings.std} />
+                    <Rating label="Rapid" value={person.ratings.rapid} />
+                    <Rating label="Blitz" value={person.ratings.blitz} />
+                  </div>
+                )}
+
+                <blockquote className="mt-4 border-t border-hairline pt-4 text-sm italic leading-relaxed text-muted">
+                  “{person.quote}”
+                </blockquote>
               </div>
             </Reveal>
           ))}
