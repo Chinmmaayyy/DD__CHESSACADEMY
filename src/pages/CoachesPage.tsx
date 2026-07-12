@@ -54,7 +54,7 @@ export function CoachesPage() {
                     </span>
                   )}
                   {person.tags && person.tags.length > 0 && (
-                    <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 bg-gradient-to-t from-navy-900/85 to-transparent p-3 pt-8">
+                    <div className="absolute inset-x-0 top-0 flex flex-wrap gap-1.5 bg-gradient-to-b from-navy-900/85 to-transparent p-3 pb-8">
                       {person.tags.map((tag) => (
                         <span
                           key={tag}
