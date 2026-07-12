@@ -54,7 +54,7 @@ export const instructors: Instructor[] = [
     name: 'Ajay Ghayal',
     title: 'Chess Coach',
     photo: ajay,
-    focus: '50% 32%',
+    focus: '50% 68%',
     ratings: { std: 1643, rapid: 1512 },
     tags: ['FIDE Rated'],
     quote: 'Your mistakes are your best teachers — learn something from every game.',
