@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Chessboard } from 'react-chessboard'
-import { RotateCcw, RefreshCw, Loader2, Trophy } from 'lucide-react'
+import { RotateCcw, RefreshCw, Loader2, Trophy, Share2, Check } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { useChessGame } from '@/features/learn/useChessGame'
 import { selectAiMove, LEVELS, type Level } from '@/features/learn/engine'
@@ -18,8 +18,9 @@ import { cn } from '@/lib/utils'
 export function PlayVsAIPage() {
   const { game, fen, status, history, move, undo, reset, legalTargets } = useChessGame()
   const [playerColor, setPlayerColor] = useState<'w' | 'b'>('w')
-  const [level, setLevel] = useState<Level>('easy')
+  const [level, setLevel] = useState<Level>(3)
   const [thinking, setThinking] = useState(false)
+  const [shared, setShared] = useState(false)
   const [selected, setSelected] = useState<string | null>(null)
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
 
@@ -99,6 +100,24 @@ export function PlayVsAIPage() {
       ? 'Draw'
       : null
 
+  const shareResult = async () => {
+    const url = `${window.location.origin}/learn/play`
+    const won = status.winner === (playerColor === 'w' ? 'White' : 'Black')
+    const verb = status.isDraw ? 'drew with' : won ? 'beat' : 'played'
+    const text = `I just ${verb} DD Chess Academy's Computer at Level ${level}! ♟️`
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'DD Chess Academy — Play the Computer', text, url })
+      } else {
+        await navigator.clipboard?.writeText(`${text} Try it: ${url}`)
+        setShared(true)
+        window.setTimeout(() => setShared(false), 1800)
+      }
+    } catch {
+      /* share dialog dismissed — ignore */
+    }
+  }
+
   return (
     <Container className="py-8 lg:py-12">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -144,9 +163,18 @@ export function PlayVsAIPage() {
           {/* Result / turn */}
           <div className="rounded-2xl border border-hairline bg-surface p-5">
             {resultText ? (
-              <div className="flex items-center gap-3">
-                <Trophy className="size-6 text-accent" />
-                <p className="font-display text-xl text-heading">{resultText}</p>
+              <div>
+                <div className="flex items-center gap-3">
+                  <Trophy className="size-6 text-accent" />
+                  <p className="font-display text-xl text-heading">{resultText}</p>
+                </div>
+                <button
+                  onClick={shareResult}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-gold-500 px-4 py-2.5 text-sm font-semibold text-navy-900 transition-colors hover:bg-gold-400"
+                >
+                  {shared ? <Check className="size-4" /> : <Share2 className="size-4" />}
+                  {shared ? 'Copied to clipboard!' : 'Share result'}
+                </button>
               </div>
             ) : (
               <div className="flex items-center gap-3">
@@ -162,23 +190,29 @@ export function PlayVsAIPage() {
             )}
           </div>
 
-          {/* Difficulty */}
+          {/* Computer level */}
           <div className="rounded-2xl border border-hairline bg-surface p-4">
-            <p className="mb-3 text-xs uppercase tracking-wider text-muted">Difficulty</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs uppercase tracking-wider text-muted">Computer level</p>
+              <p className="text-xs font-semibold text-muted">
+                {LEVELS.find((l) => l.id === level)?.blurb}
+              </p>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
               {LEVELS.map((l) => (
                 <button
                   key={l.id}
                   onClick={() => setLevel(l.id)}
                   className={cn(
-                    'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    'rounded-lg py-2 font-display text-base font-semibold transition-colors',
                     level === l.id
                       ? 'bg-gold-500 text-navy-900'
-                      : 'bg-surface-2 text-muted hover:bg-surface-2',
+                      : 'bg-surface-2 text-muted hover:text-heading',
                   )}
                   title={l.blurb}
+                  aria-label={`Computer level ${l.id}`}
                 >
-                  {l.label}
+                  {l.id}
                 </button>
               ))}
             </div>

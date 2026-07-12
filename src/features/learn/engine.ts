@@ -5,13 +5,18 @@ import { Chess, type Move } from 'chess.js'
  * quiescence search and full piece-square tables. Real Stockfish is a planned
  * upgrade; this gives a solid club-level opponent and a usable evaluation.
  */
-export type Level = 'beginner' | 'easy' | 'intermediate' | 'advanced'
+/** Computer strength, 1 (weakest) – 8 (strongest). */
+export type Level = number
 
-export const LEVELS: { id: Level; label: string; depth: number; blurb: string }[] = [
-  { id: 'beginner', label: 'Beginner', depth: 0, blurb: 'Random legal moves' },
-  { id: 'easy', label: 'Easy', depth: 1, blurb: 'Grabs undefended material' },
-  { id: 'intermediate', label: 'Intermediate', depth: 2, blurb: 'Sees a move ahead' },
-  { id: 'advanced', label: 'Advanced', depth: 2, blurb: 'Best play, deeper in endgames' },
+export const LEVELS: { id: number; depth: number; random: number; blurb: string }[] = [
+  { id: 1, depth: 1, random: 0.85, blurb: 'Beginner — mostly random moves' },
+  { id: 2, depth: 1, random: 0.6, blurb: 'Just learning the basics' },
+  { id: 3, depth: 1, random: 0.35, blurb: 'Grabs simple material' },
+  { id: 4, depth: 2, random: 0.22, blurb: 'Sees a move ahead, still slips' },
+  { id: 5, depth: 2, random: 0.12, blurb: 'Solid club improver' },
+  { id: 6, depth: 2, random: 0.05, blurb: 'Rarely blunders' },
+  { id: 7, depth: 2, random: 0, blurb: 'Best play' },
+  { id: 8, depth: 2, random: 0, blurb: 'Strongest — digs deeper in endgames' },
 ]
 
 const VALUE: Record<string, number> = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 }
@@ -177,11 +182,15 @@ export function selectAiMove(source: Chess, level: Level): Move | null {
   const game = new Chess(source.fen())
   const moves = game.moves({ verbose: true })
   if (moves.length === 0) return null
-  if (level === 'beginner') return moves[Math.floor(Math.random() * moves.length)]
 
-  let depth = level === 'easy' ? 1 : 2
-  // In low-branching (endgame) positions, depth 3 is cheap — let Advanced dig in.
-  if (level === 'advanced' && moves.length <= 12) depth = 3
+  const cfg = LEVELS.find((l) => l.id === level) ?? LEVELS[4]
+  // Lower levels occasionally play a random legal move — graded weakness.
+  if (cfg.random > 0 && Math.random() < cfg.random) {
+    return moves[Math.floor(Math.random() * moves.length)]
+  }
+  let depth = cfg.depth
+  // Level 8 digs to depth 3 in low-branching (endgame) positions, where it's cheap.
+  if (level >= 8 && moves.length <= 12) depth = 3
   return searchRoot(game, depth).move
 }
 

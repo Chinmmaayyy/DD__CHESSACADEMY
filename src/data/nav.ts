@@ -8,6 +8,7 @@ export interface NavLink {
 /** Navigation for the single-page homepage (+ a couple of dedicated pages). */
 export const navLinks: NavLink[] = [
   { label: 'Coach', href: '#coach' },
+  { label: 'Coaches', href: '#instructors' },
   { label: 'Schools', href: '#schools' },
   { label: 'Gallery', href: '/gallery', route: true },
   { label: 'Locations', href: '#branches' },
