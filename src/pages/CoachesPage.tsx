@@ -45,7 +45,8 @@ export function CoachesPage() {
                       src={person.photo}
                       alt={person.name}
                       loading="lazy"
-                      className="h-full w-full object-cover object-top"
+                      className="h-full w-full object-cover"
+                      style={{ objectPosition: person.focus ?? 'top' }}
                     />
                   ) : (
                     <span className="grid h-full w-full place-items-center bg-inverse font-display text-6xl font-semibold text-gold-400">

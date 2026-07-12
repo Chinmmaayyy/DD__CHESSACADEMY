@@ -13,6 +13,8 @@ export interface Instructor {
   photo?: string
   ratings?: { std?: number; rapid?: number; blitz?: number }
   tags?: string[]
+  /** CSS object-position for the portrait crop (default 'top'). */
+  focus?: string
 }
 
 export const instructors: Instructor[] = [
@@ -52,6 +54,7 @@ export const instructors: Instructor[] = [
     name: 'Ajay Ghayal',
     title: 'Chess Coach',
     photo: ajay,
+    focus: '50% 32%',
     ratings: { std: 1643, rapid: 1512 },
     tags: ['FIDE Rated'],
     quote: 'Your mistakes are your best teachers — learn something from every game.',
