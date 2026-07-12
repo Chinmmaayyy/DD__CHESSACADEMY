@@ -101,15 +101,17 @@ export function PlayVsAIPage() {
       : null
 
   const shareResult = async () => {
-    const url = `${window.location.origin}/learn/play`
+    // Encode the actual game (PGN) so the recipient can replay & analyse it.
+    const pgn = game.current.pgn()
+    const url = `${window.location.origin}/learn/board?pgn=${encodeURIComponent(pgn)}`
     const won = status.winner === (playerColor === 'w' ? 'White' : 'Black')
     const verb = status.isDraw ? 'drew with' : won ? 'beat' : 'played'
-    const text = `I just ${verb} DD Chess Academy's Computer at Level ${level}! ♟️`
+    const text = `I just ${verb} DD Chess Academy's Computer at Level ${level}! ♟️ Replay my game:`
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'DD Chess Academy — Play the Computer', text, url })
+        await navigator.share({ title: 'DD Chess Academy — my game', text, url })
       } else {
-        await navigator.clipboard?.writeText(`${text} Try it: ${url}`)
+        await navigator.clipboard?.writeText(`${text} ${url}`)
         setShared(true)
         window.setTimeout(() => setShared(false), 1800)
       }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
 import { RotateCcw, RefreshCw, FlipVertical2, Copy, Check, Lightbulb } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
@@ -16,8 +17,32 @@ import {
 import { cn } from '@/lib/utils'
 
 export function InteractiveBoardPage() {
-  const { game, fen, status, history, move, undo, reset, legalTargets } = useChessGame()
+  const { game, fen, status, history, move, undo, reset, legalTargets, sync } = useChessGame()
+  const [params] = useSearchParams()
+  const [sharedGame, setSharedGame] = useState(false)
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
+
+  // Load a shared game (PGN) or position (FEN) from the URL, once on mount.
+  useEffect(() => {
+    const pgn = params.get('pgn')
+    const loadFen = params.get('fen')
+    try {
+      if (pgn) {
+        game.current.loadPgn(pgn)
+        const hist = game.current.history({ verbose: true })
+        const last = hist[hist.length - 1]
+        if (last) setLastMove({ from: last.from, to: last.to })
+        setSharedGame(true)
+        sync()
+      } else if (loadFen) {
+        reset(loadFen)
+        setSharedGame(true)
+      }
+    } catch {
+      /* invalid pgn/fen in the URL — ignore */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [selected, setSelected] = useState<string | null>(null)
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
   const [copied, setCopied] = useState<'fen' | 'pgn' | null>(null)
@@ -89,6 +114,12 @@ export function InteractiveBoardPage() {
 
   return (
     <Container className="py-8 lg:py-12">
+      {sharedGame && (
+        <div className="mb-6 rounded-xl border border-gold-500/30 bg-gold-500/10 px-4 py-3 text-sm text-heading">
+          ♟️ You're viewing a shared game — use <strong>Undo</strong> to step back through the
+          moves, or play on from this position.
+        </div>
+      )}
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         {/* Board */}
         <div className="mx-auto flex w-full max-w-[600px] items-stretch gap-3">
