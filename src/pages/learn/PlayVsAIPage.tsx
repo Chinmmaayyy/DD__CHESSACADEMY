@@ -124,7 +124,8 @@ export function PlayVsAIPage() {
     <Container className="py-8 lg:py-12">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         {/* Board */}
-        <div className="mx-auto w-full max-w-[560px]">
+        <div className="mx-auto w-full max-w-[560px] rounded-2xl border border-hairline bg-surface p-2 shadow-[var(--shadow-medium)]">
+          <div className="overflow-hidden rounded-xl">
           <Chessboard
             options={{
               id: 'play-board',
@@ -158,6 +159,7 @@ export function PlayVsAIPage() {
               },
             }}
           />
+          </div>
         </div>
 
         {/* Panel */}

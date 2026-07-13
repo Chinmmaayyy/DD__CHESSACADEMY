@@ -124,7 +124,8 @@ export function InteractiveBoardPage() {
         {/* Board */}
         <div className="mx-auto flex w-full max-w-[600px] items-stretch gap-3">
           <EvalBar evaluation={analysis} orientation={orientation} analyzing={analyzing} />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 rounded-2xl border border-hairline bg-surface p-2 shadow-[var(--shadow-medium)]">
+          <div className="overflow-hidden rounded-xl">
           <Chessboard
             options={{
               id: 'analysis-board',
@@ -158,6 +159,7 @@ export function InteractiveBoardPage() {
               },
             }}
           />
+          </div>
           </div>
         </div>
 

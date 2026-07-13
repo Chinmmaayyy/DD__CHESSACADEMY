@@ -138,11 +138,12 @@ export function PuzzleTrainerPage() {
         {/* Board */}
         <div
           className={cn(
-            'mx-auto w-full max-w-[560px] rounded-2xl transition-shadow',
+            'mx-auto w-full max-w-[560px] rounded-2xl border border-hairline bg-surface p-2 shadow-[var(--shadow-medium)] transition-shadow',
             wrong && 'animate-shake ring-4 ring-danger/60',
             outcome === 'solved' && 'ring-4 ring-success/60',
           )}
         >
+          <div className="overflow-hidden rounded-xl">
           <Chessboard
             options={{
               id: 'puzzle-board',
@@ -175,6 +176,7 @@ export function PuzzleTrainerPage() {
               },
             }}
           />
+          </div>
         </div>
 
         {/* Panel */}
@@ -182,13 +184,13 @@ export function PuzzleTrainerPage() {
           {/* Pool selector */}
           <div className="rounded-2xl border border-hairline bg-surface p-4">
             <p className="mb-3 text-xs uppercase tracking-wider text-muted">Difficulty pool</p>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {(['All', ...tiers] as Pool[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setPool(t)}
                   className={cn(
-                    'rounded-lg px-2 py-2 text-xs font-semibold transition-colors',
+                    'truncate rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
                     pool === t
                       ? 'bg-gold-500 text-navy-900'
                       : 'bg-surface-2 text-muted hover:bg-surface-2',
