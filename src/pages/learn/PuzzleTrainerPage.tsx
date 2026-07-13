@@ -63,7 +63,19 @@ export function PuzzleTrainerPage() {
   const [streak, setStreak] = useState(getStreak)
 
   const solver = usePuzzleSolver(puzzle)
-  const { fen, outcome, wrong, progress, playerMoveCount, lastMove, hintSquare } = solver
+  const {
+    fen,
+    outcome,
+    wrong,
+    progress,
+    playerMoveCount,
+    lastMove,
+    wrongMove,
+    correctMove,
+    hintSquare,
+    attempts,
+    hintAfter,
+  } = solver
 
   const chess = useMemo(() => new Chess(fen), [fen])
   const [selected, setSelected] = useState<string | null>(null)
@@ -89,8 +101,16 @@ export function PuzzleTrainerPage() {
       styles[t] = chess.get(t as never) ? legalCapture(t) : legalDot(t)
     }
     if (hintSquare) styles[hintSquare] = { ...selectedSquareStyle }
+    if (correctMove) {
+      styles[correctMove.from] = { backgroundColor: 'rgba(34,197,94,0.5)' }
+      styles[correctMove.to] = { backgroundColor: 'rgba(34,197,94,0.55)' }
+    }
+    if (wrongMove) {
+      styles[wrongMove.from] = { backgroundColor: 'rgba(239,68,68,0.5)' }
+      styles[wrongMove.to] = { backgroundColor: 'rgba(239,68,68,0.6)' }
+    }
     return styles
-  }, [lastMove, hintSquare, selected, targets, chess])
+  }, [lastMove, hintSquare, selected, targets, chess, correctMove, wrongMove])
 
   const next = () => {
     setStreak(getStreak())
@@ -119,7 +139,7 @@ export function PuzzleTrainerPage() {
         <div
           className={cn(
             'mx-auto w-full max-w-[560px] rounded-2xl transition-shadow',
-            wrong && 'ring-4 ring-danger/60',
+            wrong && 'animate-shake ring-4 ring-danger/60',
             outcome === 'solved' && 'ring-4 ring-success/60',
           )}
         >
@@ -218,7 +238,9 @@ export function PuzzleTrainerPage() {
                 ? 'border-success/40 bg-success/10'
                 : wrong
                   ? 'border-danger/40 bg-danger/10'
-                  : 'border-hairline bg-surface',
+                  : hintSquare
+                    ? 'border-gold-500/40 bg-gold-500/10'
+                    : 'border-hairline bg-surface',
             )}
           >
             {outcome === 'solved' ? (
@@ -232,9 +254,28 @@ export function PuzzleTrainerPage() {
                 Solution: {puzzle.san.join(' ')}
               </p>
             ) : wrong ? (
-              <p className="flex items-center gap-2 text-content">
-                <XCircle className="size-5 text-danger" />
-                Not the move — try again.
+              <div>
+                <p className="flex items-center gap-2 font-semibold text-heading">
+                  <XCircle className="size-5 text-danger" />
+                  Not the move — try again.
+                </p>
+                {hintSquare ? (
+                  <p className="mt-1.5 text-sm text-muted">
+                    Hint: move the piece on{' '}
+                    <span className="font-semibold uppercase text-accent">{hintSquare}</span>.
+                  </p>
+                ) : (
+                  <p className="mt-1.5 text-sm text-muted">
+                    {hintAfter - attempts} more {hintAfter - attempts === 1 ? 'try' : 'tries'} before
+                    a hint.
+                  </p>
+                )}
+              </div>
+            ) : hintSquare ? (
+              <p className="flex items-center gap-2 text-heading">
+                <Lightbulb className="size-5 text-gold-400" />
+                Hint: move the piece on{' '}
+                <span className="font-semibold uppercase text-accent">{hintSquare}</span>.
               </p>
             ) : (
               <p className="text-muted">Your turn. Drag a piece to make your move.</p>

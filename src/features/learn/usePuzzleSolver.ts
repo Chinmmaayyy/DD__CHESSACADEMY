@@ -20,7 +20,14 @@ export function usePuzzleSolver(puzzle: PuzzleData) {
   const [wrong, setWrong] = useState(false)
   const [hint, setHint] = useState(false)
   const [lastMove, setLastMove] = useState<Move | null>(null)
+  const [wrongMove, setWrongMove] = useState<Move | null>(null)
+  const [correctMove, setCorrectMove] = useState<Move | null>(null)
+  const [attempts, setAttempts] = useState(0)
+  const attemptsRef = useRef(0)
   const timers = useRef<number[]>([])
+
+  /** Wrong tries allowed on the current move before the square is auto-revealed. */
+  const HINT_AFTER = 3
 
   const playerMoveCount = Math.ceil(puzzle.moves.length / 2)
 
@@ -39,6 +46,10 @@ export function usePuzzleSolver(puzzle: PuzzleData) {
     setWrong(false)
     setHint(false)
     setLastMove(null)
+    setWrongMove(null)
+    setCorrectMove(null)
+    setAttempts(0)
+    attemptsRef.current = 0
   }, [puzzle.fen])
 
   // Reset whenever the puzzle changes.
@@ -81,20 +92,27 @@ export function usePuzzleSolver(puzzle: PuzzleData) {
       mv = null
     }
     if (!mv) {
-      flashWrong()
+      flashWrong(from, to)
       return false
     }
     const actual = mv.from + mv.to + (mv.promotion ?? '')
     if (actual !== expected) {
-      flashWrong()
+      flashWrong(mv.from, mv.to)
       return false
     }
 
-    // Correct — apply the player's move.
+    // Correct — apply the player's move + flash the squares green.
     applyUci(expected)
     stepRef.current += 1
     setProgress(Math.ceil(stepRef.current / 2))
     setHint(false)
+    setWrong(false)
+    setWrongMove(null)
+    setAttempts(0)
+    attemptsRef.current = 0
+    setCorrectMove({ from: mv.from, to: mv.to })
+    const g = window.setTimeout(() => setCorrectMove(null), 700)
+    timers.current.push(g)
 
     if (stepRef.current >= puzzle.moves.length) {
       finishSolve('solved')
@@ -111,9 +129,17 @@ export function usePuzzleSolver(puzzle: PuzzleData) {
     return true
   }
 
-  const flashWrong = () => {
+  const flashWrong = (from: string, to: string) => {
+    attemptsRef.current += 1
+    setAttempts(attemptsRef.current)
     setWrong(true)
-    const t = window.setTimeout(() => setWrong(false), 650)
+    setWrongMove({ from, to })
+    // Auto-reveal the correct piece's square after enough wrong tries.
+    if (attemptsRef.current >= HINT_AFTER) setHint(true)
+    const t = window.setTimeout(() => {
+      setWrong(false)
+      setWrongMove(null)
+    }, 700)
     timers.current.push(t)
   }
 
@@ -145,7 +171,11 @@ export function usePuzzleSolver(puzzle: PuzzleData) {
     progress,
     playerMoveCount,
     lastMove,
+    wrongMove,
+    correctMove,
     hintSquare,
+    attempts,
+    hintAfter: HINT_AFTER,
     attempt,
     showSolution,
     restart,
