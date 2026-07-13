@@ -138,12 +138,12 @@ export function PuzzleTrainerPage() {
         {/* Board */}
         <div
           className={cn(
-            'mx-auto w-full max-w-[560px] rounded-2xl border border-hairline bg-surface p-2 shadow-[var(--shadow-medium)] transition-shadow',
+            'mx-auto w-full max-w-[560px] rounded-[20px] border border-gold-500/25 bg-inverse p-3 shadow-[var(--shadow-large)] transition-shadow',
             wrong && 'animate-shake ring-4 ring-danger/60',
             outcome === 'solved' && 'ring-4 ring-success/60',
           )}
         >
-          <div className="overflow-hidden rounded-xl">
+          <div className="overflow-hidden rounded-[12px] ring-1 ring-inset ring-white/10">
           <Chessboard
             options={{
               id: 'puzzle-board',
