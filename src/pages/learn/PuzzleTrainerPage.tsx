@@ -27,13 +27,13 @@ import {
   type Tier,
 } from '@/features/learn/puzzleData'
 import {
-  darkSquareStyle,
-  lightSquareStyle,
   selectedSquareStyle,
   lastMoveStyle,
   legalDot,
   legalCapture,
 } from '@/features/learn/boardTheme'
+import { useBoardTheme } from '@/hooks/useBoardTheme'
+import { BoardThemePicker } from '@/components/ui/BoardThemePicker'
 import { cn } from '@/lib/utils'
 
 type Pool = 'All' | Tier
@@ -61,6 +61,7 @@ export function PuzzleTrainerPage() {
   const [pool, setPool] = useState<Pool>('All')
   const [puzzle, setPuzzle] = useState<PuzzleData>(initial)
   const [streak, setStreak] = useState(getStreak)
+  const { themeId, setTheme, lightSquareStyle, darkSquareStyle } = useBoardTheme()
 
   const solver = usePuzzleSolver(puzzle)
   const {
@@ -304,6 +305,8 @@ export function PuzzleTrainerPage() {
               </PanelButton>
             </div>
           )}
+
+          <BoardThemePicker value={themeId} onChange={setTheme} />
         </aside>
       </div>
     </Container>

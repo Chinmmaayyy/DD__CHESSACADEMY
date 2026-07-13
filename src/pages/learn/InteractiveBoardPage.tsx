@@ -6,14 +6,14 @@ import { Container } from '@/components/ui/Container'
 import { useChessGame } from '@/features/learn/useChessGame'
 import { evaluatePosition, type PositionEval } from '@/features/learn/engine'
 import {
-  darkSquareStyle,
-  lightSquareStyle,
   legalDot,
   legalCapture,
   selectedSquareStyle,
   lastMoveStyle,
   checkSquareStyle,
 } from '@/features/learn/boardTheme'
+import { useBoardTheme } from '@/hooks/useBoardTheme'
+import { BoardThemePicker } from '@/components/ui/BoardThemePicker'
 import { cn } from '@/lib/utils'
 
 export function InteractiveBoardPage() {
@@ -21,6 +21,7 @@ export function InteractiveBoardPage() {
   const [params] = useSearchParams()
   const [sharedGame, setSharedGame] = useState(false)
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
+  const { themeId, setTheme, lightSquareStyle, darkSquareStyle } = useBoardTheme()
 
   // Load a shared game (PGN) or position (FEN) from the URL, once on mount.
   useEffect(() => {
@@ -237,6 +238,8 @@ export function InteractiveBoardPage() {
               </ol>
             )}
           </div>
+
+          <BoardThemePicker value={themeId} onChange={setTheme} />
         </aside>
       </div>
     </Container>

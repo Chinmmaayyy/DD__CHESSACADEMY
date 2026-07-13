@@ -1,6 +1,27 @@
 import type { CSSProperties } from 'react'
 
-/** Brand board colours (matches the hero board). */
+export interface BoardTheme {
+  id: string
+  name: string
+  light: string
+  dark: string
+}
+
+/** Selectable board colour schemes (Chess.com-style). */
+export const BOARD_THEMES: BoardTheme[] = [
+  { id: 'emerald', name: 'Emerald', light: '#efe6cd', dark: '#1f5a48' },
+  { id: 'green', name: 'Green', light: '#eeeed2', dark: '#769656' },
+  { id: 'wood', name: 'Wood', light: '#f0d9b5', dark: '#b58863' },
+  { id: 'blue', name: 'Blue', light: '#dee3e6', dark: '#4b7399' },
+  { id: 'purple', name: 'Purple', light: '#efefef', dark: '#8877b7' },
+  { id: 'coral', name: 'Coral', light: '#f8e3d4', dark: '#d08b6e' },
+  { id: 'slate', name: 'Slate', light: '#dcdcdc', dark: '#8f8f8f' },
+  { id: 'midnight', name: 'Midnight', light: '#c5cbd8', dark: '#3b4a68' },
+]
+
+export const DEFAULT_BOARD_THEME = 'emerald'
+
+/** Brand board colours (default — kept for any non-configurable board). */
 export const darkSquareStyle: CSSProperties = { backgroundColor: '#1f5a48' }
 export const lightSquareStyle: CSSProperties = { backgroundColor: '#efe6cd' }
 

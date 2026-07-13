@@ -5,14 +5,14 @@ import { Container } from '@/components/ui/Container'
 import { useChessGame } from '@/features/learn/useChessGame'
 import { selectAiMove, LEVELS, type Level } from '@/features/learn/engine'
 import {
-  darkSquareStyle,
-  lightSquareStyle,
   legalDot,
   legalCapture,
   selectedSquareStyle,
   lastMoveStyle,
   checkSquareStyle,
 } from '@/features/learn/boardTheme'
+import { useBoardTheme } from '@/hooks/useBoardTheme'
+import { BoardThemePicker } from '@/components/ui/BoardThemePicker'
 import { cn } from '@/lib/utils'
 
 export function PlayVsAIPage() {
@@ -21,6 +21,7 @@ export function PlayVsAIPage() {
   const [level, setLevel] = useState<Level>(3)
   const [thinking, setThinking] = useState(false)
   const [shared, setShared] = useState(false)
+  const { themeId, setTheme, lightSquareStyle, darkSquareStyle } = useBoardTheme()
   const [selected, setSelected] = useState<string | null>(null)
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
 
@@ -269,6 +270,8 @@ export function PlayVsAIPage() {
               New game
             </button>
           </div>
+
+          <BoardThemePicker value={themeId} onChange={setTheme} />
         </aside>
       </div>
     </Container>
