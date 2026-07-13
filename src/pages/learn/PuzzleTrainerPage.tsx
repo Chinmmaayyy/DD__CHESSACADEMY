@@ -139,7 +139,7 @@ export function PuzzleTrainerPage() {
         {/* Board */}
         <div
           className={cn(
-            'mx-auto w-full max-w-[560px] rounded-[20px] border border-gold-500/25 bg-inverse p-3 shadow-[var(--shadow-large)] transition-shadow',
+            'mx-auto w-full max-w-[560px] self-start rounded-[20px] border border-gold-500/25 bg-inverse p-3 shadow-[var(--shadow-large)] transition-shadow',
             wrong && 'animate-shake ring-4 ring-danger/60',
             outcome === 'solved' && 'ring-4 ring-success/60',
           )}

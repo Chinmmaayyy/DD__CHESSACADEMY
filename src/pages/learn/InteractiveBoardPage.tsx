@@ -123,7 +123,7 @@ export function InteractiveBoardPage() {
       )}
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         {/* Board */}
-        <div className="mx-auto flex w-full max-w-[600px] items-stretch gap-3">
+        <div className="mx-auto flex w-full max-w-[600px] self-start items-stretch gap-3">
           <EvalBar evaluation={analysis} orientation={orientation} analyzing={analyzing} />
           <div className="min-w-0 flex-1 rounded-[20px] border border-gold-500/25 bg-inverse p-3 shadow-[var(--shadow-large)]">
           <div className="overflow-hidden rounded-[12px] ring-1 ring-inset ring-white/10">
