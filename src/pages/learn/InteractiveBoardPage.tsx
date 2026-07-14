@@ -40,6 +40,7 @@ export function InteractiveBoardPage() {
   const [params] = useSearchParams()
   const [sharedGame, setSharedGame] = useState(false)
   const [replay, setReplay] = useState<ReplayMove[]>([])
+  const [sourcePgn, setSourcePgn] = useState<string | null>(null)
   const [ply, setPly] = useState(0)
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const { themeId, setTheme, lightSquareStyle, darkSquareStyle } = useBoardTheme()
@@ -65,6 +66,9 @@ export function InteractiveBoardPage() {
           setPly(hist.length)
           const last = hist[hist.length - 1]
           setLastMove({ from: last.from, to: last.to })
+          // Keep the original PGN — stepping through rebuilds from FENs, which
+          // would otherwise leave chess.js with no move history to export.
+          setSourcePgn(game.current.pgn())
         }
         setSharedGame(true)
         sync()
@@ -302,7 +306,11 @@ export function InteractiveBoardPage() {
           >
             {showBest ? 'Hide best move' : 'Show best move'}
           </ControlButton>
-          <ControlButton onClick={() => copy(game.current.pgn(), 'pgn')} icon={copied === 'pgn' ? Check : Copy} full>
+          <ControlButton
+            onClick={() => copy(sourcePgn ?? game.current.pgn(), 'pgn')}
+            icon={copied === 'pgn' ? Check : Copy}
+            full
+          >
             {copied === 'pgn' ? 'PGN copied' : 'Copy PGN'}
           </ControlButton>
 
