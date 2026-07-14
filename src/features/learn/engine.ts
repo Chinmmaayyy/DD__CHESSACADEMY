@@ -8,15 +8,27 @@ import { Chess, type Move } from 'chess.js'
 /** Computer strength, 1 (weakest) – 8 (strongest). */
 export type Level = number
 
-export const LEVELS: { id: number; depth: number; random: number; blurb: string }[] = [
-  { id: 1, depth: 1, random: 0.85, blurb: 'Beginner — mostly random moves' },
-  { id: 2, depth: 1, random: 0.6, blurb: 'Just learning the basics' },
-  { id: 3, depth: 1, random: 0.35, blurb: 'Grabs simple material' },
-  { id: 4, depth: 2, random: 0.22, blurb: 'Sees a move ahead, still slips' },
-  { id: 5, depth: 2, random: 0.12, blurb: 'Solid club improver' },
-  { id: 6, depth: 2, random: 0.05, blurb: 'Rarely blunders' },
-  { id: 7, depth: 2, random: 0, blurb: 'Best play' },
-  { id: 8, depth: 2, random: 0, blurb: 'Strongest — digs deeper in endgames' },
+/**
+ * `skill` / `sfDepth` / `movetime` drive real Stockfish.
+ * `depth` / `random` are only used by the built-in JS fallback engine.
+ */
+export const LEVELS: {
+  id: number
+  depth: number
+  random: number
+  skill: number
+  sfDepth: number
+  movetime: number
+  blurb: string
+}[] = [
+  { id: 1, depth: 1, random: 0.85, skill: 0, sfDepth: 1, movetime: 50, blurb: 'Beginner — barely looks ahead' },
+  { id: 2, depth: 1, random: 0.6, skill: 1, sfDepth: 2, movetime: 100, blurb: 'Just learning the basics' },
+  { id: 3, depth: 1, random: 0.35, skill: 3, sfDepth: 3, movetime: 150, blurb: 'Grabs simple material' },
+  { id: 4, depth: 2, random: 0.22, skill: 5, sfDepth: 5, movetime: 250, blurb: 'Sees tactics, still slips' },
+  { id: 5, depth: 2, random: 0.12, skill: 8, sfDepth: 7, movetime: 400, blurb: 'Solid club improver' },
+  { id: 6, depth: 2, random: 0.05, skill: 12, sfDepth: 9, movetime: 600, blurb: 'Strong club player' },
+  { id: 7, depth: 2, random: 0, skill: 16, sfDepth: 12, movetime: 1000, blurb: 'Expert — punishes mistakes' },
+  { id: 8, depth: 2, random: 0, skill: 20, sfDepth: 16, movetime: 1500, blurb: 'Master — full strength' },
 ]
 
 const VALUE: Record<string, number> = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 }

@@ -4,6 +4,7 @@ import { RotateCcw, RefreshCw, Loader2, Trophy, Share2, Check } from 'lucide-rea
 import { Container } from '@/components/ui/Container'
 import { useChessGame } from '@/features/learn/useChessGame'
 import { selectAiMove, LEVELS, type Level } from '@/features/learn/engine'
+import { stockfishBestMove, warmupEngine } from '@/features/learn/stockfish'
 import {
   legalDot,
   legalCapture,
@@ -28,20 +29,46 @@ export function PlayVsAIPage() {
   const aiColor = playerColor === 'w' ? 'b' : 'w'
   const targets = selected ? legalTargets(selected) : []
 
-  // AI moves whenever it is its turn.
+  // Start downloading Stockfish as soon as the page opens (~7 MB WASM).
+  useEffect(() => {
+    warmupEngine()
+  }, [])
+
+  // AI moves whenever it is its turn — real Stockfish, with a JS fallback.
   useEffect(() => {
     if (status.isGameOver) return
     if (status.turn !== aiColor) return
+
+    let cancelled = false
     setThinking(true)
-    const t = window.setTimeout(() => {
-      const best = selectAiMove(game.current, level)
-      if (best) {
-        move({ from: best.from, to: best.to, promotion: best.promotion })
-        setLastMove({ from: best.from, to: best.to })
+
+    const run = async () => {
+      const cfg = LEVELS.find((l) => l.id === level) ?? LEVELS[4]
+      let best = await stockfishBestMove(game.current.fen(), {
+        skill: cfg.skill,
+        depth: cfg.sfDepth,
+        movetime: cfg.movetime,
+      })
+      if (cancelled) return
+
+      // Stockfish unavailable (or timed out) → use the built-in engine.
+      if (!best) {
+        const fb = selectAiMove(game.current, level)
+        best = fb ? { from: fb.from, to: fb.to, promotion: fb.promotion } : null
       }
+      if (cancelled || !best) {
+        setThinking(false)
+        return
+      }
+
+      move({ from: best.from, to: best.to, promotion: best.promotion ?? 'q' })
+      setLastMove({ from: best.from, to: best.to })
       setThinking(false)
-    }, 350)
+    }
+
+    const t = window.setTimeout(run, 250)
     return () => {
+      cancelled = true
       window.clearTimeout(t)
       setThinking(false)
     }
@@ -272,6 +299,19 @@ export function PlayVsAIPage() {
           </div>
 
           <BoardThemePicker value={themeId} onChange={setTheme} />
+
+          <p className="text-center text-xs text-muted">
+            Engine:{' '}
+            <a
+              href="https://github.com/nmrugg/stockfish.js"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-accent hover:underline"
+            >
+              Stockfish 18
+            </a>{' '}
+            (GPLv3)
+          </p>
         </aside>
       </div>
     </Container>
