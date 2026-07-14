@@ -1,7 +1,18 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
-import { RotateCcw, RefreshCw, FlipVertical2, Copy, Check, Lightbulb } from 'lucide-react'
+import {
+  RotateCcw,
+  RefreshCw,
+  FlipVertical2,
+  Copy,
+  Check,
+  Lightbulb,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { useChessGame } from '@/features/learn/useChessGame'
 import { evaluatePosition, type PositionEval } from '@/features/learn/engine'
@@ -16,10 +27,20 @@ import { useBoardTheme } from '@/hooks/useBoardTheme'
 import { BoardThemePicker } from '@/components/ui/BoardThemePicker'
 import { cn } from '@/lib/utils'
 
+interface ReplayMove {
+  from: string
+  to: string
+  san: string
+  before: string
+  after: string
+}
+
 export function InteractiveBoardPage() {
   const { game, fen, status, history, move, undo, reset, legalTargets, sync } = useChessGame()
   const [params] = useSearchParams()
   const [sharedGame, setSharedGame] = useState(false)
+  const [replay, setReplay] = useState<ReplayMove[]>([])
+  const [ply, setPly] = useState(0)
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const { themeId, setTheme, lightSquareStyle, darkSquareStyle } = useBoardTheme()
 
@@ -31,8 +52,20 @@ export function InteractiveBoardPage() {
       if (pgn) {
         game.current.loadPgn(pgn)
         const hist = game.current.history({ verbose: true })
-        const last = hist[hist.length - 1]
-        if (last) setLastMove({ from: last.from, to: last.to })
+        if (hist.length) {
+          setReplay(
+            hist.map((m) => ({
+              from: m.from,
+              to: m.to,
+              san: m.san,
+              before: m.before,
+              after: m.after,
+            })),
+          )
+          setPly(hist.length)
+          const last = hist[hist.length - 1]
+          setLastMove({ from: last.from, to: last.to })
+        }
         setSharedGame(true)
         sync()
       } else if (loadFen) {
@@ -44,6 +77,18 @@ export function InteractiveBoardPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  /** Jump to any point in the shared game (non-destructive — you can go back and forward). */
+  const goTo = (n: number) => {
+    if (!replay.length) return
+    const at = Math.max(0, Math.min(replay.length, n))
+    const fen = at === 0 ? replay[0].before : replay[at - 1].after
+    reset(fen)
+    setPly(at)
+    setSelected(null)
+    setShowBest(false)
+    setLastMove(at === 0 ? null : { from: replay[at - 1].from, to: replay[at - 1].to })
+  }
   const [selected, setSelected] = useState<string | null>(null)
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
   const [copied, setCopied] = useState<'fen' | 'pgn' | null>(null)
@@ -108,6 +153,11 @@ export function InteractiveBoardPage() {
   }
 
   const resetAll = () => {
+    // For a shared game, "reset" returns to the start of THAT game (keeps the PGN).
+    if (replay.length) {
+      goTo(0)
+      return
+    }
     reset()
     setSelected(null)
     setLastMove(null)
@@ -116,9 +166,16 @@ export function InteractiveBoardPage() {
   return (
     <Container className="py-8 lg:py-12">
       {sharedGame && (
-        <div className="mb-6 rounded-xl border border-gold-500/30 bg-gold-500/10 px-4 py-3 text-sm text-heading">
-          ♟️ You're viewing a shared game — use <strong>Undo</strong> to step back through the
-          moves, or play on from this position.
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gold-500/30 bg-gold-500/10 px-4 py-3 text-sm text-heading">
+          <span>
+            ♟️ You're viewing a shared game — step through it with the arrows, or play on from
+            any position.
+          </span>
+          {replay.length > 0 && (
+            <span className="font-semibold tnum">
+              Move {ply} / {replay.length}
+            </span>
+          )}
         </div>
       )}
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -191,6 +248,34 @@ export function InteractiveBoardPage() {
             )}
           </div>
 
+          {/* Replay navigation (shared game) */}
+          {replay.length > 0 && (
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { icon: ChevronsLeft, label: 'Start', to: 0, off: ply === 0 },
+                { icon: ChevronLeft, label: 'Previous move', to: ply - 1, off: ply === 0 },
+                { icon: ChevronRight, label: 'Next move', to: ply + 1, off: ply >= replay.length },
+                {
+                  icon: ChevronsRight,
+                  label: 'End',
+                  to: replay.length,
+                  off: ply >= replay.length,
+                },
+              ].map(({ icon: Icon, label, to, off }) => (
+                <button
+                  key={label}
+                  onClick={() => goTo(to)}
+                  disabled={off}
+                  title={label}
+                  aria-label={label}
+                  className="flex items-center justify-center rounded-xl border border-hairline bg-surface py-3 text-content transition-colors hover:border-gold-500/40 disabled:opacity-40"
+                >
+                  <Icon className="size-5" />
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Controls */}
           <div className="grid grid-cols-2 gap-3">
             <ControlButton onClick={undo} disabled={history.length === 0} icon={RotateCcw}>
@@ -224,7 +309,33 @@ export function InteractiveBoardPage() {
           {/* Move list */}
           <div className="min-h-[140px] flex-1 rounded-2xl border border-hairline bg-surface p-4">
             <p className="mb-2 text-xs uppercase tracking-wider text-muted">Moves</p>
-            {history.length === 0 ? (
+            {replay.length > 0 ? (
+              // Shared game — click any move to jump to it.
+              <ol className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-content tnum">
+                {Array.from({ length: Math.ceil(replay.length / 2) }).map((_, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <span className="w-6 shrink-0 text-muted">{i + 1}.</span>
+                    {[0, 1].map((k) => {
+                      const idx = i * 2 + k
+                      const m = replay[idx]
+                      if (!m) return <span key={k} className="flex-1" />
+                      return (
+                        <button
+                          key={k}
+                          onClick={() => goTo(idx + 1)}
+                          className={cn(
+                            'flex-1 rounded px-1 text-left transition-colors hover:bg-surface-2',
+                            ply === idx + 1 && 'bg-gold-500/20 font-semibold text-accent',
+                          )}
+                        >
+                          {m.san}
+                        </button>
+                      )
+                    })}
+                  </li>
+                ))}
+              </ol>
+            ) : history.length === 0 ? (
               <p className="text-sm text-muted">Make a move to begin.</p>
             ) : (
               <ol className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-content tnum">
