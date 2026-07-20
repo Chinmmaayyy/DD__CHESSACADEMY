@@ -44,6 +44,20 @@ export function PlayVsAIPage() {
 
     const run = async () => {
       const cfg = LEVELS.find((l) => l.id === level) ?? LEVELS[4]
+
+      // Easy levels deliberately play a random legal move a lot of the time,
+      // so beginners can actually win. Higher levels have random = 0.
+      if (cfg.random > 0 && Math.random() < cfg.random) {
+        const legal = game.current.moves({ verbose: true })
+        const rm = legal[Math.floor(Math.random() * legal.length)]
+        if (rm) {
+          move({ from: rm.from, to: rm.to, promotion: rm.promotion ?? 'q' })
+          setLastMove({ from: rm.from, to: rm.to })
+          setThinking(false)
+          return
+        }
+      }
+
       let best = await stockfishBestMove(game.current.fen(), {
         skill: cfg.skill,
         depth: cfg.sfDepth,

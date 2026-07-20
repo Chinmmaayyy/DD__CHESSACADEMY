@@ -21,12 +21,12 @@ export const LEVELS: {
   movetime: number
   blurb: string
 }[] = [
-  { id: 1, depth: 1, random: 0.85, skill: 0, sfDepth: 1, movetime: 50, blurb: 'Beginner — barely looks ahead' },
-  { id: 2, depth: 1, random: 0.6, skill: 1, sfDepth: 2, movetime: 100, blurb: 'Just learning the basics' },
-  { id: 3, depth: 1, random: 0.35, skill: 3, sfDepth: 3, movetime: 150, blurb: 'Grabs simple material' },
-  { id: 4, depth: 2, random: 0.22, skill: 5, sfDepth: 5, movetime: 250, blurb: 'Sees tactics, still slips' },
-  { id: 5, depth: 2, random: 0.12, skill: 8, sfDepth: 7, movetime: 400, blurb: 'Solid club improver' },
-  { id: 6, depth: 2, random: 0.05, skill: 12, sfDepth: 9, movetime: 600, blurb: 'Strong club player' },
+  { id: 1, depth: 1, random: 0.92, skill: 0, sfDepth: 1, movetime: 40, blurb: 'Total beginner — plays almost randomly' },
+  { id: 2, depth: 1, random: 0.75, skill: 0, sfDepth: 1, movetime: 50, blurb: 'Beginner — blunders often' },
+  { id: 3, depth: 1, random: 0.5, skill: 1, sfDepth: 2, movetime: 80, blurb: 'Casual — makes frequent mistakes' },
+  { id: 4, depth: 2, random: 0.28, skill: 3, sfDepth: 4, movetime: 200, blurb: 'Improver — sees basic tactics' },
+  { id: 5, depth: 2, random: 0.15, skill: 6, sfDepth: 6, movetime: 350, blurb: 'Solid club player' },
+  { id: 6, depth: 2, random: 0.05, skill: 11, sfDepth: 9, movetime: 550, blurb: 'Strong club player' },
   { id: 7, depth: 2, random: 0, skill: 16, sfDepth: 12, movetime: 1000, blurb: 'Expert — punishes mistakes' },
   { id: 8, depth: 2, random: 0, skill: 20, sfDepth: 16, movetime: 1500, blurb: 'Master — full strength' },
 ]
