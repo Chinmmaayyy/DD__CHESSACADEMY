@@ -13,7 +13,7 @@
  * block the user or throw on CORS. If the endpoint is empty, this no-ops.
  */
 export const SHEETS_ENDPOINT =
-  'https://script.google.com/macros/s/AKfycbx6hfRqxfq_kXC29RA0VBMRlyHnBk5E_vf7_wwrx_dtbyX6spsFWRM9OB2iktnQl2Lg/exec'
+  'https://script.google.com/macros/s/AKfycbyYcGOw748LXhDZNEvenSB9NlI3Kq0gdrxMmxvR2rse-z3-J2OqnQ2Ddn6CpVj-m4vR/exec'
 
 export type LeadEvent =
   | { type: 'enquiry'; [k: string]: unknown }
