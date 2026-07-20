@@ -28,10 +28,10 @@ export function Hero() {
       id="top"
       className="relative overflow-hidden bg-canvas pt-28 pb-12 text-content lg:pt-36 lg:pb-16"
     >
-      {/* background texture + glows */}
-      <div className="chess-grid absolute inset-0 opacity-70" />
-      <div className="glow-gold absolute -right-40 -top-20 size-[520px]" />
-      <div className="glow-gold absolute -left-40 top-1/2 size-[440px] opacity-60" />
+      {/* background texture + glows (subtle in light, rich in dark) */}
+      <div className="chess-grid absolute inset-0 opacity-30 dark:opacity-70" />
+      <div className="glow-gold absolute -right-40 -top-20 size-[520px] opacity-40 dark:opacity-100" />
+      <div className="glow-gold absolute -left-40 top-1/2 size-[440px] opacity-20 dark:opacity-60" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-canvas" />
 
       <Container className="relative">

@@ -48,15 +48,19 @@ export function Navbar() {
     >
       <nav className="container-x flex h-16 items-center justify-between gap-4 lg:h-20 lg:gap-8">
         {/* Logo */}
-        <a href="/#top" className="flex shrink-0 items-center gap-2.5" aria-label="DD Chess Academy home">
-          <span className="grid size-9 place-items-center rounded-[10px] bg-gold-500 text-navy-900">
+        <a
+          href="/#top"
+          className="flex min-w-0 items-center gap-2 sm:gap-2.5"
+          aria-label="DD Chess Academy home"
+        >
+          <span className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-gold-500 text-navy-900 sm:size-9">
             <Crown className="size-5" strokeWidth={2} />
           </span>
-          <span className="flex flex-col leading-none">
-            <span className="font-display text-lg font-semibold text-heading">
+          <span className="flex min-w-0 flex-col leading-none">
+            <span className="truncate font-display text-base font-semibold text-heading sm:text-lg">
               DD Chess Academy
             </span>
-            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">
+            <span className="truncate text-[9px] font-semibold uppercase tracking-[0.12em] text-accent sm:mt-0.5 sm:text-[10px] sm:tracking-[0.22em]">
               National Arbiter · FIDE Trainer
             </span>
           </span>
@@ -114,7 +118,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile controls */}
-        <div className="flex items-center gap-1 lg:hidden">
+        <div className="flex shrink-0 items-center gap-1 lg:hidden">
           <ThemeToggle />
           <button
             className="grid size-10 place-items-center rounded-lg text-heading transition-colors"

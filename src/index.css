@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Make `dark:` utilities respond to our [data-theme='dark'] toggle (not the OS). */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 /* ============================================================
    DD CHESS ACADEMY — DESIGN TOKENS
    Source of truth: Master Specification v2 / v9 + Design System
