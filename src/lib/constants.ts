@@ -12,7 +12,7 @@ export const ACADEMY = {
   phoneRaw: '919920605578',
   whatsapp: '919920605578',
   email: 'dhuridipak2@gmail.com',
-  domain: 'www.ddchessacademy.com',
+  domain: 'ddchessacademy.in',
   serviceArea: 'Dombivli',
   social: {
     instagram: 'https://instagram.com/',

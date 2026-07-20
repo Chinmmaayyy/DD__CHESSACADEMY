@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Update the domain here once the real domain is purchased. -->
+<!-- Live domain: ddchessacademy.in -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.ddchessacademy.com/</loc>
+    <loc>https://ddchessacademy.in/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog</loc>
+    <loc>https://ddchessacademy.in/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/gallery</loc>
+    <loc>https://ddchessacademy.in/gallery</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/coaches</loc>
+    <loc>https://ddchessacademy.in/coaches</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog/chess-classes-kalyan-dombivli-region</loc>
+    <loc>https://ddchessacademy.in/blog/chess-classes-kalyan-dombivli-region</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog/chess-best-after-school-activity-kalyan</loc>
+    <loc>https://ddchessacademy.in/blog/chess-best-after-school-activity-kalyan</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog/building-local-chess-champions-dombivli</loc>
+    <loc>https://ddchessacademy.in/blog/building-local-chess-champions-dombivli</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog/benefits-of-chess-for-children</loc>
+    <loc>https://ddchessacademy.in/blog/benefits-of-chess-for-children</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog/how-to-choose-chess-classes-dombivli</loc>
+    <loc>https://ddchessacademy.in/blog/how-to-choose-chess-classes-dombivli</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/blog/chess-principles-for-beginners</loc>
+    <loc>https://ddchessacademy.in/blog/chess-principles-for-beginners</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.ddchessacademy.com/learn</loc>
+    <loc>https://ddchessacademy.in/learn</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

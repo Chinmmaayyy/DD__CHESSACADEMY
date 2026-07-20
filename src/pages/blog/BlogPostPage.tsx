@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { getPost, posts } from '@/data/blog'
 import { useDocumentMeta } from '@/hooks/useDocumentMeta'
 
-const SITE = 'https://www.ddchessacademy.com'
+const SITE = 'https://ddchessacademy.in'
 
 const md = {
   h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (

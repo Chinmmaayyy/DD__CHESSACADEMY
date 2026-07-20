@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const SITE = 'https://www.ddchessacademy.com'
+const SITE = 'https://ddchessacademy.in'
 
 interface Meta {
   title: string
