@@ -18,7 +18,7 @@ export const stats: Stat[] = [
   },
   {
     icon: MapPin,
-    value: 4,
+    value: 3,
     label: 'Convenient Locations',
     caption: 'Across the Dombivli region',
   },

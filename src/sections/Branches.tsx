@@ -14,7 +14,7 @@ export function Branches() {
       <Container>
         <SectionHeading
           eyebrow="📍 Our Locations"
-          title="Four Convenient Centres Near You"
+          title="Convenient Centres Near You"
           description="Find a class close to home. Every centre offers the same structured coaching and warm learning environment."
         />
 

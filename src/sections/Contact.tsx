@@ -119,5 +119,5 @@ export function Contact() {
 }
 
 function branchesSummary() {
-  return '4 centres across Dombivli, Nandivali & Thakurli'
+  return '3 centres across Dombivli, Nandivali & Thakurli'
 }

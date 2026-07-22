@@ -32,11 +32,6 @@ const raw: RawBranch[] = [
     area: 'Thakurli',
     query: 'Atharva Playgroup, Thakurli, Dombivli, Maharashtra',
   },
-  {
-    name: 'SMV Art Hub',
-    area: 'Dombivli',
-    query: 'SMV Art Hub, Dombivli, Maharashtra',
-  },
 ]
 
 export const branches: Branch[] = raw.map((b) => ({
