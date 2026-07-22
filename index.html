@@ -2,7 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Favicons: .ico first (Google + legacy), SVG for modern browsers -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta -->
@@ -86,6 +92,23 @@
         },
         "sport": "Chess",
         "audience": { "@type": "Audience", "suggestedMinAge": 5 }
+      }
+    </script>
+    <!-- Organization + logo (helps Google show your brand icon) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "DD Chess Academy",
+        "url": "https://ddchessacademy.in",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://ddchessacademy.in/favicon-512x512.png",
+          "width": 512,
+          "height": 512
+        },
+        "telephone": "+91-99206-05578",
+        "email": "dhuridipak2@gmail.com"
       }
     </script>
     <!-- FAQ structured data (eligible for rich results) -->
