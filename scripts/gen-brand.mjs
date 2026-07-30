@@ -17,18 +17,30 @@ const pub = join(root, 'public')
 
 const GOLD = '#d4af37'
 
-// Square-cropped DD emblem for the favicon — crisp vector, white background baked in.
+// DD emblem for the favicon — crisp vector, white background baked in.
 const logoSrc = await readFile(join(assets, 'logo.svg'), 'utf8')
-const SQUARE_VB = '999 356 823 823'
-const emblemSvg = (px) =>
+const SQUARE_VB = '999 356 823 823' //  tight square — for the opaque apple-touch tile
+const CIRCLE_VB = '900 258 1020 1020' // padded so the wide emblem fits inside the disc
+const emblemSvg = (px, vb) =>
   Buffer.from(
     logoSrc.replace(
       /<svg[^>]*>/,
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${SQUARE_VB}" width="${px}" height="${px}">`,
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="${px}" height="${px}">`,
     ),
   )
 
-const icon = (size) => sharp(emblemSvg(size)).png().toBuffer()
+// A white disc mask — keeps the emblem, makes the corners transparent.
+const circleMask = (px) =>
+  Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}"><circle cx="${px / 2}" cy="${px / 2}" r="${px / 2}" fill="#fff"/></svg>`,
+  )
+
+// Circular favicon: white disc + centered emblem, transparent outside the circle.
+const icon = async (size) =>
+  sharp(await sharp(emblemSvg(size, CIRCLE_VB)).png().toBuffer())
+    .composite([{ input: circleMask(size), blend: 'dest-in' }])
+    .png()
+    .toBuffer()
 
 // --- PNG favicons (circle) ---
 for (const [name, size] of [
@@ -40,8 +52,11 @@ for (const [name, size] of [
   await writeFile(join(pub, name), await icon(size))
   console.log(`  ${name}`)
 }
-// apple-touch: white-tile emblem (iOS rounds the corners).
-await writeFile(join(pub, 'apple-touch-icon.png'), await icon(180))
+// apple-touch: opaque white square tile (iOS rounds the corners itself).
+await writeFile(
+  join(pub, 'apple-touch-icon.png'),
+  await sharp(emblemSvg(180, SQUARE_VB)).png().toBuffer(),
+)
 console.log('  apple-touch-icon.png')
 
 // --- Real multi-size .ico (16/32/48) ---
@@ -66,14 +81,12 @@ const entries = icoImgs.map((img, i) => {
 await writeFile(join(pub, 'favicon.ico'), Buffer.concat([header, ...entries, ...icoImgs]))
 console.log('  favicon.ico')
 
-// --- SVG favicon (crisp vector, scales to any size) ---
+// --- SVG favicon (crisp vector, clipped to a circle) ---
+const inner = logoSrc.replace(/<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
 await writeFile(
   join(pub, 'favicon.svg'),
   Buffer.from(
-    logoSrc.replace(
-      /<svg[^>]*>/,
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${SQUARE_VB}">`,
-    ),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${CIRCLE_VB}"><defs><clipPath id="dd-disc"><circle cx="1410" cy="768" r="510"/></clipPath></defs><g clip-path="url(#dd-disc)">${inner}</g></svg>`,
   ),
 )
 console.log('  favicon.svg')
