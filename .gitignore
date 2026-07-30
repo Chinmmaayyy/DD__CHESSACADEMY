@@ -25,3 +25,4 @@ dist-ssr
 
 # Stockfish engine (copied from node_modules at build time)
 public/engine/
+google-photos/

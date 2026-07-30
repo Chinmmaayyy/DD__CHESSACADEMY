@@ -83,7 +83,21 @@ export function Footer() {
 
           {/* Branches */}
           <div>
-            <h4 className="font-display text-base font-semibold text-white">Locations</h4>
+            <h4 className="font-display text-base font-semibold text-white">Chess Classes In</h4>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {[
+                { label: 'Dombivli', to: '/chess-classes-dombivli' },
+                { label: 'Kalyan', to: '/chess-classes-kalyan' },
+                { label: 'Thakurli', to: '/chess-classes-thakurli' },
+              ].map((l) => (
+                <li key={l.to}>
+                  <Link to={l.to} className="transition-colors hover:text-gold-400">
+                    Chess Classes in {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <h4 className="mt-6 font-display text-base font-semibold text-white">Locations</h4>
             <ul className="mt-4 space-y-2.5 text-sm">
               {branches.map((b) => (
                 <li key={`${b.name}-${b.area}`} className="flex gap-2">

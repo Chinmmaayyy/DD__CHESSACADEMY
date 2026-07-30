@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { MarketingLayout } from '@/layouts/MarketingLayout'
 import { LearnLayout } from '@/layouts/LearnLayout'
 import { HomePage } from '@/pages/HomePage'
+import { locations } from '@/data/locations'
 
 // Learn platform is code-split — chess.js / react-chessboard load only on /learn.
 const LearnHub = lazy(() =>
@@ -34,6 +35,9 @@ const GalleryPage = lazy(() =>
 )
 const CoachesPage = lazy(() =>
   import('@/pages/CoachesPage').then((m) => ({ default: m.CoachesPage })),
+)
+const LocationPage = lazy(() =>
+  import('@/pages/LocationPage').then((m) => ({ default: m.LocationPage })),
 )
 
 /** Reset scroll on route change (but keep in-page hash anchors working). */
@@ -109,6 +113,17 @@ function App() {
               </Suspense>
             }
           />
+          {locations.map((l) => (
+            <Route
+              key={l.slug}
+              path={l.slug}
+              element={
+                <Suspense fallback={<LearnFallback />}>
+                  <LocationPage />
+                </Suspense>
+              }
+            />
+          ))}
         </Route>
 
         <Route
