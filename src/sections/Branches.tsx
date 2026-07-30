@@ -8,6 +8,10 @@ import { branches } from '@/data/branches'
 import { ACADEMY } from '@/lib/constants'
 import { telLink } from '@/lib/utils'
 
+/** Put the flagship centre in the middle of the row (falls back to source order). */
+const displayBranches =
+  branches.length === 3 ? [branches[1], branches[0], branches[2]] : branches
+
 export function Branches() {
   return (
     <Section id="branches" tone="ivory">
@@ -18,9 +22,13 @@ export function Branches() {
           description="Find a class close to home. Every centre offers the same structured coaching and warm learning environment."
         />
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {branches.map((b, i) => (
-            <Reveal key={`${b.name}-${b.area}`} delay={(i % 4) * 0.08} className="h-full">
+        <div className="mx-auto mt-14 flex max-w-5xl flex-wrap justify-center gap-5">
+          {displayBranches.map((b, i) => (
+            <Reveal
+              key={`${b.name}-${b.area}`}
+              delay={(i % 3) * 0.08}
+              className="h-full w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.834rem)]"
+            >
               <article className="flex h-full flex-col overflow-hidden rounded-[20px] border border-hairline bg-surface shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-medium)]">
                 {/* Live embedded map */}
                 <div className="relative h-40 w-full overflow-hidden border-b border-hairline bg-canvas">
@@ -34,7 +42,7 @@ export function Branches() {
                   />
                 </div>
 
-                <div className="flex flex-1 flex-col p-6">
+                <div className="flex flex-1 flex-col items-center p-6 text-center">
                   <span className="grid size-11 place-items-center rounded-xl bg-inverse text-gold-500">
                     <MapPin className="size-5" />
                   </span>
@@ -42,7 +50,7 @@ export function Branches() {
                     {b.name}
                   </h3>
                   <p className="mt-1 text-sm text-muted">{b.area}</p>
-                  <div className="mt-auto pt-5">
+                  <div className="mt-auto w-full pt-5">
                     <Button
                       as="a"
                       href={b.mapUrl}
