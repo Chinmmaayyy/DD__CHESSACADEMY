@@ -12,6 +12,7 @@ import { coach } from '@/data/coach'
 import { ACADEMY } from '@/lib/constants'
 import { whatsappLink, telLink } from '@/lib/utils'
 import { useDocumentMeta } from '@/hooks/useDocumentMeta'
+import dipakPhoto from '@/assets/dipak_sir.png'
 
 const SITE = 'https://ddchessacademy.in'
 
@@ -228,9 +229,11 @@ export function LocationPage({ slug: slugProp }: { slug?: string } = {}) {
       {/* Coach highlight */}
       <Container className="py-14">
         <div className="grid items-center gap-8 rounded-[24px] border border-hairline bg-surface p-6 shadow-[var(--shadow-soft)] sm:grid-cols-[auto_1fr] sm:p-8">
-          <span className="grid size-20 place-items-center rounded-full border-2 border-gold-500/40 bg-inverse font-display text-3xl font-semibold text-gold-400">
-            DD
-          </span>
+          <img
+            src={dipakPhoto}
+            alt="Coach Dipak Dhuri — National Arbiter & FIDE Trainer"
+            className="size-20 rounded-full border-2 border-gold-500/40 object-cover object-top"
+          />
           <div>
             <h2 className="font-display text-2xl font-semibold text-heading">
               Learn from Coach Dipak Dhuri
