@@ -58,10 +58,10 @@ export function Navbar() {
             <img src={logoMark} alt="DD Chess Academy logo" className="h-6 w-auto sm:h-7" />
           </span>
           <span className="flex min-w-0 flex-col leading-none">
-            <span className="truncate font-display text-base font-semibold text-heading sm:text-lg">
+            <span className="font-display text-base font-semibold text-heading sm:text-lg">
               DD Chess Academy
             </span>
-            <span className="truncate text-[9px] font-semibold uppercase tracking-[0.12em] text-accent sm:mt-0.5 sm:text-[10px] sm:tracking-[0.22em]">
+            <span className="mt-0.5 hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-accent sm:block">
               National Arbiter · FIDE Trainer
             </span>
           </span>
