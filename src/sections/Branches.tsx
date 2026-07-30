@@ -1,4 +1,5 @@
-import { MapPin, Navigation, Phone } from 'lucide-react'
+import { MapPin, Navigation, Phone, ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Section } from '@/components/ui/Section'
 import { Container } from '@/components/ui/Container'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -69,6 +70,27 @@ export function Branches() {
             </Reveal>
           ))}
         </div>
+
+        {/* Explore each area's dedicated page */}
+        <Reveal delay={0.05}>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 text-sm">
+            <span className="font-medium text-muted">Chess classes by area:</span>
+            {[
+              { label: 'Dombivli', to: '/chess-classes-dombivli' },
+              { label: 'Kalyan', to: '/chess-classes-kalyan' },
+              { label: 'Thakurli', to: '/chess-classes-thakurli' },
+            ].map((a) => (
+              <Link
+                key={a.to}
+                to={a.to}
+                className="inline-flex items-center gap-1 rounded-full border border-hairline bg-surface px-4 py-1.5 font-semibold text-heading transition-colors hover:border-gold-500/50 hover:text-accent"
+              >
+                {a.label}
+                <ChevronRight className="size-3.5" />
+              </Link>
+            ))}
+          </div>
+        </Reveal>
 
         {/* Call band */}
         <Reveal delay={0.1}>
