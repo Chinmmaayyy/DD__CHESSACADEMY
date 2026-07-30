@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X, Crown, Gamepad2, BookOpen } from 'lucide-react'
+import { Menu, X, Gamepad2, BookOpen } from 'lucide-react'
+import logoMark from '@/assets/logo-mark.png'
 import { navLinks } from '@/data/nav'
 import { ACADEMY, WHATSAPP_DEFAULT_MESSAGE } from '@/lib/constants'
 import { whatsappLink, cn } from '@/lib/utils'
@@ -53,8 +54,8 @@ export function Navbar() {
           className="flex min-w-0 items-center gap-2 sm:gap-2.5"
           aria-label="DD Chess Academy home"
         >
-          <span className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-gold-500 text-navy-900 sm:size-9">
-            <Crown className="size-5" strokeWidth={2} />
+          <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white shadow-sm ring-1 ring-black/5 sm:size-10">
+            <img src={logoMark} alt="DD Chess Academy logo" className="size-full object-contain p-1" />
           </span>
           <span className="flex min-w-0 flex-col leading-none">
             <span className="truncate font-display text-base font-semibold text-heading sm:text-lg">
