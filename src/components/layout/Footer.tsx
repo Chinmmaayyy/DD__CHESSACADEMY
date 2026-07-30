@@ -1,6 +1,5 @@
-import { Camera, Globe, Play, Phone, Mail, MapPin } from 'lucide-react'
+import { Crown, Camera, Globe, Play, Phone, Mail, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import logoMark from '@/assets/logo-mark.png'
 import { Container } from '@/components/ui/Container'
 import { navLinks } from '@/data/nav'
 import { branches } from '@/data/branches'
@@ -17,8 +16,8 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex h-10 items-center rounded-lg bg-white px-2">
-                <img src={logoMark} alt="DD Chess Academy logo" className="h-7 w-auto" />
+              <span className="grid size-10 place-items-center rounded-[10px] bg-gold-500 text-navy-900">
+                <Crown className="size-5" strokeWidth={2} />
               </span>
               <span className="font-display text-lg font-semibold text-white">
                 DD Chess Academy

@@ -33,8 +33,9 @@ function RichText({ text }: { text: string }) {
   )
 }
 
-export function LocationPage() {
-  const { slug } = useParams<{ slug: string }>()
+export function LocationPage({ slug: slugProp }: { slug?: string } = {}) {
+  const params = useParams<{ slug: string }>()
+  const slug = slugProp ?? params.slug
   const loc = slug ? getLocation(slug) : undefined
 
   useDocumentMeta({

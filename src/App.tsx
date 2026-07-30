@@ -119,7 +119,7 @@ function App() {
               path={l.slug}
               element={
                 <Suspense fallback={<LearnFallback />}>
-                  <LocationPage />
+                  <LocationPage slug={l.slug} />
                 </Suspense>
               }
             />
