@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Crown, ArrowLeft, Puzzle, LibraryBig, Bot, Grid3x3 } from 'lucide-react'
+import { ArrowLeft, Puzzle, LibraryBig, Bot, Grid3x3 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import logoSvg from '@/assets/logo.svg'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const learnNav = [
@@ -18,8 +19,8 @@ export function LearnLayout() {
         <div className="container-x flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2.5" aria-label="DD Chess Academy home">
-              <span className="grid size-9 place-items-center rounded-[10px] bg-gold-500 text-navy-900">
-                <Crown className="size-5" strokeWidth={2} />
+              <span className="flex h-9 items-center overflow-hidden rounded-lg bg-white px-1.5 ring-1 ring-black/10">
+                <img src={logoSvg} alt="DD Chess Academy logo" className="h-6 w-auto" />
               </span>
               <span className="hidden font-display text-base font-semibold text-heading sm:block">
                 DD Chess · Play
