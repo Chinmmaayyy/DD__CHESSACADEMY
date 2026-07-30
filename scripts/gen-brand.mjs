@@ -16,28 +16,19 @@ const assets = join(root, 'src', 'assets')
 const pub = join(root, 'public')
 
 const GOLD = '#d4af37'
-const NAVY = '#0b1220'
 
-/** A crisp crown glyph on a filled shape (circle for tabs, square for iOS). */
-function iconSvg(size, { circle = true, bg = GOLD } = {}) {
-  const shape = circle
-    ? `<circle cx="32" cy="32" r="32" fill="${bg}"/>`
-    : `<rect width="64" height="64" fill="${bg}"/>`
-  return Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="${size}" height="${size}">
-       ${shape}
-       <g fill="${NAVY}">
-         <path d="M13 43 L17.5 23 L26 31 L32 18 L38 31 L46.5 23 L51 43 Z"/>
-         <rect x="12" y="43" width="40" height="7" rx="2"/>
-         <circle cx="17.5" cy="21.5" r="2.6"/>
-         <circle cx="32" cy="16" r="2.8"/>
-         <circle cx="46.5" cy="21.5" r="2.6"/>
-       </g>
-     </svg>`,
+// Square-cropped DD emblem for the favicon — crisp vector, white background baked in.
+const logoSrc = await readFile(join(assets, 'logo.svg'), 'utf8')
+const SQUARE_VB = '999 356 823 823'
+const emblemSvg = (px) =>
+  Buffer.from(
+    logoSrc.replace(
+      /<svg[^>]*>/,
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${SQUARE_VB}" width="${px}" height="${px}">`,
+    ),
   )
-}
 
-const icon = (size, opts = {}) => sharp(iconSvg(size, opts)).png().toBuffer()
+const icon = (size) => sharp(emblemSvg(size)).png().toBuffer()
 
 // --- PNG favicons (circle) ---
 for (const [name, size] of [
@@ -49,8 +40,8 @@ for (const [name, size] of [
   await writeFile(join(pub, name), await icon(size))
   console.log(`  ${name}`)
 }
-// apple-touch: full square (iOS rounds it), opaque gold.
-await writeFile(join(pub, 'apple-touch-icon.png'), await icon(180, { circle: false }))
+// apple-touch: white-tile emblem (iOS rounds the corners).
+await writeFile(join(pub, 'apple-touch-icon.png'), await icon(180))
 console.log('  apple-touch-icon.png')
 
 // --- Real multi-size .ico (16/32/48) ---
@@ -75,8 +66,16 @@ const entries = icoImgs.map((img, i) => {
 await writeFile(join(pub, 'favicon.ico'), Buffer.concat([header, ...entries, ...icoImgs]))
 console.log('  favicon.ico')
 
-// --- SVG favicon (crisp, scales to any size) ---
-await writeFile(join(pub, 'favicon.svg'), iconSvg(64))
+// --- SVG favicon (crisp vector, scales to any size) ---
+await writeFile(
+  join(pub, 'favicon.svg'),
+  Buffer.from(
+    logoSrc.replace(
+      /<svg[^>]*>/,
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${SQUARE_VB}">`,
+    ),
+  ),
+)
 console.log('  favicon.svg')
 
 // --- OG / social share image (1200x630): full logo + headline + CTA ---
