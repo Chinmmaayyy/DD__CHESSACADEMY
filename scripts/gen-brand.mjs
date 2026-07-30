@@ -1,9 +1,9 @@
 /**
- * Generates all brand assets from the DD Chess Academy logo:
- *   - favicons (.ico + PNG sizes + apple-touch-icon) from the emblem
- *   - og-image.jpg (social/WhatsApp share card) from the full lockup
+ * Generates all brand assets:
+ *   - favicons (.ico + PNGs + apple-touch + SVG): a bold gold circle + navy crown,
+ *     WhatsApp-style — high contrast, clearly visible in any browser tab.
+ *   - og-image.jpg (social/WhatsApp share card) from the full logo lockup.
  *
- * Sources: src/assets/logo-mark.png (emblem, transparent) + logo-full.png (lockup).
  * Run: node scripts/gen-brand.mjs
  */
 import { readFile, writeFile } from 'node:fs/promises'
@@ -15,40 +15,43 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const assets = join(root, 'src', 'assets')
 const pub = join(root, 'public')
 
-const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 }
-const WHITE = { r: 255, g: 255, b: 255, alpha: 1 }
+const GOLD = '#d4af37'
+const NAVY = '#0b1220'
 
-// Tightly-cropped emblem (threshold ignores faint AI-export edge artifacts).
-const markTrimmed = await sharp(join(assets, 'logo-mark.png'))
-  .trim({ threshold: 50 })
-  .png()
-  .toBuffer()
-// Save the trimmed emblem back for crisp use in the navbar/footer.
-await writeFile(join(assets, 'logo-mark.png'), markTrimmed)
-
-/** Square icon: emblem centred on a padded canvas (white so it reads on any tab). */
-async function icon(size, { pad = 0.14, bg = WHITE } = {}) {
-  const inner = Math.round(size * (1 - pad * 2))
-  const resized = await sharp(markTrimmed)
-    .resize(inner, inner, { fit: 'contain', background: TRANSPARENT })
-    .toBuffer()
-  return sharp({ create: { width: size, height: size, channels: 4, background: bg } })
-    .composite([{ input: resized, gravity: 'center' }])
-    .png()
-    .toBuffer()
+/** A crisp crown glyph on a filled shape (circle for tabs, square for iOS). */
+function iconSvg(size, { circle = true, bg = GOLD } = {}) {
+  const shape = circle
+    ? `<circle cx="32" cy="32" r="32" fill="${bg}"/>`
+    : `<rect width="64" height="64" fill="${bg}"/>`
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="${size}" height="${size}">
+       ${shape}
+       <g fill="${NAVY}">
+         <path d="M13 43 L17.5 23 L26 31 L32 18 L38 31 L46.5 23 L51 43 Z"/>
+         <rect x="12" y="43" width="40" height="7" rx="2"/>
+         <circle cx="17.5" cy="21.5" r="2.6"/>
+         <circle cx="32" cy="16" r="2.8"/>
+         <circle cx="46.5" cy="21.5" r="2.6"/>
+       </g>
+     </svg>`,
+  )
 }
 
-// --- PNG favicons + apple-touch (opaque white so iOS looks clean) ---
-for (const [name, size, opts] of [
-  ['favicon-48x48.png', 48, {}],
-  ['favicon-96x96.png', 96, {}],
-  ['favicon-192x192.png', 192, {}],
-  ['favicon-512x512.png', 512, {}],
-  ['apple-touch-icon.png', 180, { bg: WHITE, pad: 0.12 }],
+const icon = (size, opts = {}) => sharp(iconSvg(size, opts)).png().toBuffer()
+
+// --- PNG favicons (circle) ---
+for (const [name, size] of [
+  ['favicon-48x48.png', 48],
+  ['favicon-96x96.png', 96],
+  ['favicon-192x192.png', 192],
+  ['favicon-512x512.png', 512],
 ]) {
-  await writeFile(join(pub, name), await icon(size, opts))
+  await writeFile(join(pub, name), await icon(size))
   console.log(`  ${name}`)
 }
+// apple-touch: full square (iOS rounds it), opaque gold.
+await writeFile(join(pub, 'apple-touch-icon.png'), await icon(180, { circle: false }))
+console.log('  apple-touch-icon.png')
 
 // --- Real multi-size .ico (16/32/48) ---
 const icoSizes = [16, 32, 48]
@@ -72,13 +75,11 @@ const entries = icoImgs.map((img, i) => {
 await writeFile(join(pub, 'favicon.ico'), Buffer.concat([header, ...entries, ...icoImgs]))
 console.log('  favicon.ico')
 
-// --- SVG favicon: embed the emblem PNG so modern browsers show the new mark too ---
-const markB64 = markTrimmed.toString('base64')
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="16" fill="#ffffff"/><image href="data:image/png;base64,${markB64}" x="10" y="21" width="80" height="58" preserveAspectRatio="xMidYMid meet"/></svg>`
-await writeFile(join(pub, 'favicon.svg'), svg)
+// --- SVG favicon (crisp, scales to any size) ---
+await writeFile(join(pub, 'favicon.svg'), iconSvg(64))
 console.log('  favicon.svg')
 
-// --- OG / social share image (1200x630): logo + headline + call-to-action ---
+// --- OG / social share image (1200x630): full logo + headline + CTA ---
 const OG_W = 1200
 const OG_H = 630
 const logoMeta = await sharp(join(assets, 'logo-full.png')).metadata()
@@ -87,8 +88,8 @@ const logoH = Math.round((logoW * (logoMeta.height ?? 1536)) / (logoMeta.width ?
 const lockup = await sharp(join(assets, 'logo-full.png')).resize({ width: logoW }).toBuffer()
 const overlay = Buffer.from(
   `<svg width="${OG_W}" height="${OG_H}" xmlns="http://www.w3.org/2000/svg">
-     <rect width="${OG_W}" height="10" fill="#d4af37"/>
-     <rect y="${OG_H - 10}" width="${OG_W}" height="10" fill="#d4af37"/>
+     <rect width="${OG_W}" height="10" fill="${GOLD}"/>
+     <rect y="${OG_H - 10}" width="${OG_W}" height="10" fill="${GOLD}"/>
      <text x="600" y="500" font-family="Arial, sans-serif" font-size="40" font-weight="700"
            fill="#16203a" text-anchor="middle">Chess Classes in Dombivli · Kalyan · Thakurli</text>
      <text x="600" y="556" font-family="Arial, sans-serif" font-size="30" font-weight="700"
