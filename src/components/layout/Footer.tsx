@@ -17,8 +17,8 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid size-10 place-items-center overflow-hidden rounded-[10px] bg-white">
-                <img src={logoMark} alt="DD Chess Academy logo" className="size-full object-contain p-1" />
+              <span className="flex h-10 items-center rounded-lg bg-white px-2">
+                <img src={logoMark} alt="DD Chess Academy logo" className="h-7 w-auto" />
               </span>
               <span className="font-display text-lg font-semibold text-white">
                 DD Chess Academy

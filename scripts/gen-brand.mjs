@@ -26,8 +26,8 @@ const markTrimmed = await sharp(join(assets, 'logo-mark.png'))
 // Save the trimmed emblem back for crisp use in the navbar/footer.
 await writeFile(join(assets, 'logo-mark.png'), markTrimmed)
 
-/** Square icon: emblem centred on a padded canvas. */
-async function icon(size, { pad = 0.1, bg = TRANSPARENT } = {}) {
+/** Square icon: emblem centred on a padded canvas (white so it reads on any tab). */
+async function icon(size, { pad = 0.14, bg = WHITE } = {}) {
   const inner = Math.round(size * (1 - pad * 2))
   const resized = await sharp(markTrimmed)
     .resize(inner, inner, { fit: 'contain', background: TRANSPARENT })
@@ -74,21 +74,35 @@ console.log('  favicon.ico')
 
 // --- SVG favicon: embed the emblem PNG so modern browsers show the new mark too ---
 const markB64 = markTrimmed.toString('base64')
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><image href="data:image/png;base64,${markB64}" x="8" y="8" width="84" height="84"/></svg>`
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="16" fill="#ffffff"/><image href="data:image/png;base64,${markB64}" x="10" y="21" width="80" height="58" preserveAspectRatio="xMidYMid meet"/></svg>`
 await writeFile(join(pub, 'favicon.svg'), svg)
 console.log('  favicon.svg')
 
-// --- OG / social share image (1200x630) from the full lockup on white ---
+// --- OG / social share image (1200x630): logo + headline + call-to-action ---
 const OG_W = 1200
 const OG_H = 630
-const lockup = await sharp(join(assets, 'logo-full.png'))
-  .resize({ width: 1000, withoutEnlargement: true })
-  .toBuffer()
+const logoMeta = await sharp(join(assets, 'logo-full.png')).metadata()
+const logoW = 660
+const logoH = Math.round((logoW * (logoMeta.height ?? 1536)) / (logoMeta.width ?? 2816))
+const lockup = await sharp(join(assets, 'logo-full.png')).resize({ width: logoW }).toBuffer()
+const overlay = Buffer.from(
+  `<svg width="${OG_W}" height="${OG_H}" xmlns="http://www.w3.org/2000/svg">
+     <rect width="${OG_W}" height="10" fill="#d4af37"/>
+     <rect y="${OG_H - 10}" width="${OG_W}" height="10" fill="#d4af37"/>
+     <text x="600" y="500" font-family="Arial, sans-serif" font-size="40" font-weight="700"
+           fill="#16203a" text-anchor="middle">Chess Classes in Dombivli · Kalyan · Thakurli</text>
+     <text x="600" y="556" font-family="Arial, sans-serif" font-size="30" font-weight="700"
+           fill="#b8952b" text-anchor="middle">Book a Free Demo — National Arbiter &amp; FIDE Trainer</text>
+   </svg>`,
+)
 await sharp({ create: { width: OG_W, height: OG_H, channels: 3, background: '#ffffff' } })
-  .composite([{ input: lockup, gravity: 'center' }])
+  .composite([
+    { input: lockup, top: 70, left: Math.round((OG_W - logoW) / 2) },
+    { input: overlay, top: 0, left: 0 },
+  ])
   .jpeg({ quality: 88 })
   .toFile(join(pub, 'og-image.jpg'))
-console.log('  og-image.jpg (1200x630)')
+console.log(`  og-image.jpg (1200x630, logo ${logoW}x${logoH} + CTA)`)
 
 const preview = await readFile(join(pub, 'og-image.jpg'))
 console.log(`\nBrand assets generated. og-image ${(preview.length / 1024).toFixed(0)} KB`)

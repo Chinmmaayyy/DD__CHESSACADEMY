@@ -19,8 +19,8 @@ export function LearnLayout() {
         <div className="container-x flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2.5" aria-label="DD Chess Academy home">
-              <span className="grid size-9 place-items-center overflow-hidden rounded-[10px] bg-white ring-1 ring-black/5">
-                <img src={logoMark} alt="DD Chess Academy logo" className="size-full object-contain p-1" />
+              <span className="flex h-9 items-center rounded-lg bg-white px-2 ring-1 ring-black/10">
+                <img src={logoMark} alt="DD Chess Academy logo" className="h-6 w-auto" />
               </span>
               <span className="hidden font-display text-base font-semibold text-heading sm:block">
                 DD Chess · Play

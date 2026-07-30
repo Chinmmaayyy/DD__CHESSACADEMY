@@ -54,8 +54,8 @@ export function Navbar() {
           className="flex min-w-0 items-center gap-2 sm:gap-2.5"
           aria-label="DD Chess Academy home"
         >
-          <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white shadow-sm ring-1 ring-black/5 sm:size-10">
-            <img src={logoMark} alt="DD Chess Academy logo" className="size-full object-contain p-1" />
+          <span className="flex h-9 shrink-0 items-center rounded-lg bg-white px-2 shadow-sm ring-1 ring-black/10 sm:h-10">
+            <img src={logoMark} alt="DD Chess Academy logo" className="h-6 w-auto sm:h-7" />
           </span>
           <span className="flex min-w-0 flex-col leading-none">
             <span className="truncate font-display text-base font-semibold text-heading sm:text-lg">
